@@ -3,7 +3,7 @@ import cherrypy
 
 port = 8080
 
-if PORT in os.environ:
+if 'PORT' in os.environ:
 	port = os.environ['PORT']
 
 class HelloWorld:
