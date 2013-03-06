@@ -2,3 +2,6 @@
 *.swo
 *.*~
 *.pyc
+
+logs/
+.env
