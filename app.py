@@ -11,5 +11,9 @@ class HelloWorld:
 		return "MORO :D!"
 	index.exposed = True
 
-cherrypy.server.socket_port = port
+print("Using port: " + str(port))
+cherrypy.config.update({'server.socket_host': '127.0.0.1',
+						'server.socket_port': int(port),
+                       })
+
 cherrypy.quickstart(HelloWorld())
