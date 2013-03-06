@@ -18,7 +18,8 @@ dburl = os.environ['DATABASE_URL']
 engine = create_engine(dburl, echo=True)
 
 
-metadata.create_all(engine)
+#metadata = MetaData()
+#metadata.create_all(engine)
 
 class HelloWorld:
 	def index(self):
