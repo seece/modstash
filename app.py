@@ -1,5 +1,7 @@
 import os
 import cherrypy
+import sqlalchemy
+from sqlalchemy import create_engine
 
 port = 8080
 
@@ -16,7 +18,7 @@ class HelloWorld:
 		return "MORO :D!"
 	index.exposed = True
 
-print("Using port: " + str(port))
+print("Using port " + str(port))
 cherrypy.config.update({'server.socket_host': '0.0.0.0',
 						'server.socket_port': int(port),
                        })
