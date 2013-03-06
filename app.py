@@ -2,6 +2,7 @@ import os
 import cherrypy
 import sqlalchemy
 from sqlalchemy import create_engine
+from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
 
 port = 8080
 
@@ -12,6 +13,12 @@ if not 'DATABASE_URL' in os.environ:
 	raise Exception("No database URL!")
 else:
 		print("Database URL found.")
+
+dburl = os.environ['DATABASE_URL']
+engine = create_engine(dburl, echo=True)
+
+
+metadata.create_all(engine)
 
 class HelloWorld:
 	def index(self):
