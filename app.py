@@ -12,7 +12,7 @@ class HelloWorld:
 	index.exposed = True
 
 print("Using port: " + str(port))
-cherrypy.config.update({'server.socket_host': '127.0.0.1',
+cherrypy.config.update({'server.socket_host': '0.0.0.0',
 						'server.socket_port': int(port),
                        })
 
