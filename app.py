@@ -5,9 +5,13 @@ import cherrypy
 #from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
 
 port = 8080
+address = '0.0.0.0'
 
 if 'PORT' in os.environ:
 	port = os.environ['PORT']
+
+if 'ADDR' in os.environ:
+	address = os.environ['ADDR']
 
 if not 'DATABASE_URL' in os.environ:
 	raise Exception("No database URL!")
@@ -26,8 +30,8 @@ class HelloWorld:
 		return "MORO :D!"
 	index.exposed = True
 
-print("Using port " + str(port))
-cherrypy.config.update({'server.socket_host': '0.0.0.0',
+print("Listening on ",address,":",str(port))
+cherrypy.config.update({'server.socket_host': address,
 						'server.socket_port': int(port),
                        })
 
