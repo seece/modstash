@@ -1,8 +1,8 @@
 import os
 import cherrypy
-import sqlalchemy
-from sqlalchemy import create_engine
-from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
+#import sqlalchemy
+#from sqlalchemy import create_engine
+#from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
 
 port = 8080
 
@@ -14,8 +14,8 @@ if not 'DATABASE_URL' in os.environ:
 else:
 		print("Database URL found.")
 
-dburl = os.environ['DATABASE_URL']
-engine = create_engine(dburl, echo=True)
+#dburl = os.environ['DATABASE_URL']
+#engine = create_engine(dburl, echo=True)
 
 
 #metadata = MetaData()
