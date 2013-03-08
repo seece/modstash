@@ -1,4 +1,2 @@
-SQLAlchemy==0.8.0b2
-https://bitbucket.org/cherrypy/cherrypy/downloads/CherryPy-3.2.3.tar.gz
-## The following requirements were added by pip --freeze:
+CherryPy==3.2.3
 psycopg2==2.4.6
