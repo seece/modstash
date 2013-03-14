@@ -1,5 +1,7 @@
 ## Tietokohteet
 
+![Tietosisältökaavio](tietosisalto.png)
+
 ### User
 |attribuutti	| arvojoukko 	| kuvailu
 |---------------|---------------|----------|
