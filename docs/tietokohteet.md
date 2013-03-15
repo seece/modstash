@@ -20,7 +20,8 @@ Käyttäjästä tallennetaan erikseen näyttönimi ja käyttäjänimi, sillä k�
 |attribuutti	| arvojoukko 	| kuvailu
 |---------------|---------------|----------|
 | index			| integer		| artistin järjestysnumero kappaleen nimessä
-| external_name	| varchar		| jos NULL, on kyseessä järjestelmässä oleva käyttäjä, muuten artistin nimi
+| shown_name	| varchar		| artistinimi joka näytetään kappaleen nimen vieressä
+| external		| boolean		| jos tosi, kyseessä on järjestelmän ulkoinen käyttäjä eikä usernamella ole merkitystä
 
 Esittää jonkin kappaleen yhtä tekijää. 
 
@@ -28,12 +29,20 @@ Esittää jonkin kappaleen yhtä tekijää.
 |attribuutti	| arvojoukko 	| kuvailu
 |---------------|---------------|----------|
 | id			| integer		| kappaleen numeromuotoinen tunniste
-| name			| varchar		| kappaleen nimi
+| title			| varchar		| kappaleen nimi
+| upload_date	| date			| ajanhetki jolloin kappale ladattiin palveluun
 | downloads		| integer		| kuinka monta kertaa kappale on ladattu
 | original_url	| varchar		| alkuperäiskappaleen latausosoite
 | render_url 	| varchar		| mp3-pakatun version latausosoite, voi olla NULL
 
 Song on yksi järjestelmään ladattu kappale. Kappaleeseen liittyy yksi tai useampi käyttäjä (User) Author-roolissa. Kappaleessa voi olla myös listattu useampia käytettyjä instrumentteja (Instrument)
+
+### TrimmedName
+|attribuutti	| arvojoukko 	| kuvailu
+|---------------|---------------|----------|
+| nicename		| varchar		| jonkin kappaleen siistitty nimi
+
+Taulukko kappaleiden siistityille nimille, joita käytetään tunnisteena kappaleen URL:ssä. Tämä on käyttäjälle selkeämpää kuin pelkän numeromuotoisen tunnisteen näyttäminen. 
 
 ### Influence
 |attribuutti	| arvojoukko 				| kuvailu
