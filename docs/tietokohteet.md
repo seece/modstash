@@ -19,9 +19,8 @@ Käyttäjästä tallennetaan erikseen näyttönimi ja käyttäjänimi, sillä k�
 ### Author
 |attribuutti	| arvojoukko 	| kuvailu
 |---------------|---------------|----------|
-| index			| integer		| artistin järjestysnumero kappaleen nimessä
+| position		| integer		| artistin järjestysnumero kappaleen nimessä
 | shown_name	| varchar		| artistinimi joka näytetään kappaleen nimen vieressä
-| external		| boolean		| jos tosi, kyseessä on järjestelmän ulkoinen käyttäjä eikä usernamella ole merkitystä
 
 Esittää jonkin kappaleen yhtä tekijää. 
 
@@ -47,6 +46,7 @@ Taulukko kappaleiden siistityille nimille, joita käytetään tunnisteena kappal
 ### Influence
 |attribuutti	| arvojoukko 				| kuvailu
 |---------------|-------------------		|----------|
+| id 			| integer					| kappalekohtainen järjestysnumero
 | external_url	| varchar					| viittaus ulkoiseen resurssiin, voi olla NULL
 | type			|{remix,inspiration,sample}	| jokin kolmesta enum-tyyppisestä tunnisteesta joka kertoo vaikutteen laadun
 
@@ -68,7 +68,7 @@ Jonkin kappaleen yksittäinen instrumentti. Yhteen instrumenttiin liittyy yksi �
 
 Samplella tarkoitetaan yhden instrumentin käyttämää ääninäytettä. Sample tunnistetaan MD5-tiivisteestään, ja useampi tiiviste voikin viitata yhteen sampleen.
 
-### MD5Hash
+### SampleHash
 |attribuutti	| arvojoukko 	| kuvailu
 |---------------|---------------|----------|
 | hash			| varchar		| MD5-tiiviste
