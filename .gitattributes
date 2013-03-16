@@ -1,0 +1,8 @@
+*.sh text
+*.py text
+*.md text
+*.txt text
+README text
+Procfile text
+*.sql text
+

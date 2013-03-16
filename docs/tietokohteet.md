@@ -48,7 +48,7 @@ Taulukko kappaleiden siistityille nimille, joita käytetään tunnisteena kappal
 |attribuutti	| arvojoukko 				| kuvailu
 |---------------|-------------------		|----------|
 | external_url	| varchar					| viittaus ulkoiseen resurssiin, voi olla NULL
-| type			|{remix,inspiration,sample}	| jokin kolmesta tekstimuotoisesta tunnisteesta joka kertoo vaikutteen tyypin
+| type			|{remix,inspiration,sample}	| jokin kolmesta enum-tyyppisestä tunnisteesta joka kertoo vaikutteen laadun
 
 Influence esittää yhtä johonkin kappaleeseen kohdistunutta vaikutetta. Yhteen kappaleeseen voi liittyä useampia vaikutteita. Vaikute voi olla joko järjestelmän sisäinen viittaus, tai linkki ulkoiseen resurssiin (external_url).
 
