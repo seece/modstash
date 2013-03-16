@@ -1,5 +1,8 @@
-\set echo ALL
+## Tietokanta
 
+![Tietokantakaavio](tietokanta.png)
+
+```sql
 CREATE SCHEMA ms; 
 
 CREATE TABLE ms.User (
@@ -68,4 +71,4 @@ CREATE TABLE ms.SampleHash (
     filesize    integer NOT NULL,
     PRIMARY KEY(hash, filesize)
 );
-
+```
