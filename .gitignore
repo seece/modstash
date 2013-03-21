@@ -3,5 +3,8 @@
 *.*~
 *.pyc
 
+# project specific
 logs/
 .env
+run.bat
+
