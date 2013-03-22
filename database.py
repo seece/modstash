@@ -8,6 +8,7 @@ else:
 	print("Database URL found.")
 
 dburl = os.environ['DATABASE_URL']
+schema = "ms"
 
 def test_connection():
 	try:
@@ -17,3 +18,11 @@ def test_connection():
 		raise
 	conn.close()
 	return True
+
+def get_connection():
+	try:
+		conn = psycopg2.connect(dburl)
+	except Exception as e:
+		print("Database error: " + str(e))
+		raise
+	return conn
