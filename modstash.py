@@ -4,12 +4,13 @@ import cherrypy
 from model import user
 from mako.template import Template
 
-index_template = Template(filename='templates/index.mako', output_encoding='utf-8')
+index_template = Template(filename='templates/index.html', output_encoding='utf-8')
 #index_template = Template(filename='./templates/index.mako')
 
 UserModel = user.UserModel
 
-public_config = {'title': 'modstash'}
+public_config = {'title': 'modstash',
+		'stylepath' : '/static/css/style.css'}
 
 
 class lists:
@@ -31,9 +32,12 @@ class Modstash:
 
 		person = UserModel.get_user(who)
 
-		return "yeah " + str(who) + " = " + str(person)
+		if person == None:
+			return "no hit"
 
-	@cherrypy.expose
+		return "yeah " + str(who) + " = " + str(len(person)) + " fields!" 
+
+	#@cherrypy.expose
 	def adduser(self, name):
 		details = {}
 		details["username"] = name
