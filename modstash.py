@@ -1,8 +1,15 @@
 
+import os
 import cherrypy
 from model import user
+from mako.template import Template
+
+index_template = Template(filename='templates/index.mako', output_encoding='utf-8')
+#index_template = Template(filename='./templates/index.mako')
 
 UserModel = user.UserModel
+
+public_config = {'title': 'modstash'}
 
 
 class lists:
@@ -14,7 +21,7 @@ class lists:
 class Modstash:
 	@cherrypy.expose
 	def index(self):
-		return "modstash"
+		return index_template.render(config=public_config)
 
 	@cherrypy.expose
 	def users(self, who=None):

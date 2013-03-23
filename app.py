@@ -22,6 +22,8 @@ def start():
 		'server.socket_host': address,
 		'server.socket_port': int(port),
 		'tools.staticdir.root': os.path.dirname(os.path.abspath(__file__)),
+		'tools.encode.on' : True,
+		'tools.encode.encoding': 'utf8',
 	}
 
 	confdict =  {
