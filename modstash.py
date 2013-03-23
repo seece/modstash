@@ -32,6 +32,7 @@ class Modstash:
 		details["username"] = name
 		details["password"] = "PASSWORD"
 		details["email"] = "e@mail.com" 
+		print("trying to add ", name)
 		return "jea: " + str(UserModel.add_user(details))
 	
 

@@ -7,22 +7,29 @@ if not 'DATABASE_URL' in os.environ:
 else:
 	print("Database URL found.")
 
-dburl = os.environ['DATABASE_URL']
 schema = "ms"
+dburl = os.environ['DATABASE_URL']
+
+def connection():
+	try:
+		conn = psycopg2.connect(dburl)
+	except Exception as e:
+		print("Database error: " + str(e))
+		raise
+
+	return conn
+
+def cursor(conn):
+	cur = conn.cursor()
+	try:
+		cur.execute("SET search_path TO " + schema + ";")
+	except Exception as e:
+		print("DB search path error: " + str(e))
+		raise
+
+	return cur
 
 def test_connection():
-	try:
-		conn = psycopg2.connect(dburl)
-	except Exception as e:
-		print("Database error: " + str(e))
-		raise
+	conn = connection()
 	conn.close()
 	return True
-
-def get_connection():
-	try:
-		conn = psycopg2.connect(dburl)
-	except Exception as e:
-		print("Database error: " + str(e))
-		raise
-	return conn

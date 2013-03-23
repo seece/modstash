@@ -5,21 +5,25 @@
 ```sql
 CREATE SCHEMA ms; 
 
+CREATE TYPE member_type AS ENUM ('banned','guest','member','moderator','admin');
+CREATE TYPE influence_type AS ENUM ('remix','inspiration','sample','cover');
+
 CREATE TABLE ms.User (
     username        varchar PRIMARY KEY,
     screen_name     varchar NOT NULL,
     password_hash   varchar NOT NULL,
     hash_salt       varchar NOT NULL,
-    last_logged     date,
-    joined          date NOT NULL DEFAULT CURRENT_DATE,
+    last_logged     timestamptz,
+    joined          timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
     email           varchar,
-    auth_token      varchar
+    auth_token      varchar,
+	type			member_type DEFAULT 'member'
 );
 
 CREATE TABLE ms.Song (
     id              serial PRIMARY KEY,
     title           varchar NOT NULL,
-    upload_date     date NOT NULL DEFAULT CURRENT_DATE,
+    upload_date     timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
     downloads       integer NOT NULL DEFAULT 0,
     original_url    varchar NOT NULL,
     render_url      varchar
@@ -38,8 +42,6 @@ CREATE TABLE ms.TrimmedName (
     songid          integer references ms.Song(id) NOT NULL,
     nicename        varchar PRIMARY KEY
 );
-
-CREATE TYPE influence_type AS ENUM ('remix','inspiration','sample','cover');
 
 -- either destination_id or external_url should be NULL
 CREATE TABLE ms.Influence (

@@ -9,7 +9,7 @@ class UserAlreadyExistsException(Exception):
 
 class UserDetailException(Exception):
 	def __init__(self, message):
-		super(self, message)
+		Exception.__init__(self, message)
 
 '''A user record'''
 class User:
@@ -44,10 +44,10 @@ class User:
 class UserModel:
 	@classmethod
 	def get_user(cls, username):
-		conn = database.get_connection()
-		cur = conn.cursor()
+		conn = database.connection()
+		cur = database.cursor(conn) 
 
-		querystr = "SELECT * FROM " + database.schema + ".User WHERE username=%s"
+		querystr = "SELECT * FROM Member WHERE username=%s"
 		cur.execute(querystr, [username])
 		victim = cur.fetchone()
 
@@ -74,7 +74,8 @@ class UserModel:
 	def generate_salt(cls, length):
 		salt = ''
 		characters = string.ascii_letters + string.digits
-		salt.join(random.choice(characters) for x in range(length))
+		for x in range(length):
+			salt = salt + random.choice(characters)
 		return salt
 
 
@@ -84,8 +85,7 @@ class UserModel:
 		salt = cls.generate_salt(96)
 		wholestring = password + salt
 		h = hashlib.new('sha256')
-		h.update(password.encode('utf-8'))
-		h.update(salt.encode('utf-8')) # concatenate the salt to the password
+		h.update(wholestring.encode('utf-8'))
 
 		return (h.hexdigest(), salt)
 
@@ -117,18 +117,25 @@ class UserModel:
 		if not cls.validate_password(details["password"]):
 			raise UserDetailException("That's an awful password.")
 
-		conn = database.get_connection()
-		cur = conn.cursor()
+		conn = database.connection()
+		cur = database.cursor(conn)
 		
 		pwhash = cls.hash_password(details["password"])
 		screen_name = details["username"]
 
-		query = "INSERT INTO " + database.schema + ".User \
+		query = "INSERT INTO Member \
 				(username, screen_name, password_hash, hash_salt, email) \
 				VALUES (%s, %s, %s, %s, %s)"
-		cur.execute(query, 
-				(details["username"], screen_name, 
-				pwhash[0], pwhash[1], details["email"]))
+
+		try:
+			cur.execute(query, 
+					(details["username"], screen_name, 
+					pwhash[0], pwhash[1], details["email"]))
+		except Exception as e:
+			print("Can't insert user: " + str(e))
+			raise
+
+		conn.commit()
 
 		cur.close()
 		conn.close()

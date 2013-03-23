@@ -2,7 +2,13 @@
 
 ![Tietosisältökaavio](tietosisalto.png)
 
-### User
+### Luetellut tyypit
+```python
+member_type = ['banned', 'guest', 'member', 'moderator', 'admin']
+influence_type = ['remix', 'inspiration', 'sample', 'cover']
+```
+
+### Member
 |attribuutti	| arvojoukko 	| kuvailu
 |---------------|---------------|----------|
 | username		| varchar		| käyttäjänimi
@@ -13,6 +19,7 @@
 | joined		| date			| käyttäjän liittymispäivämäärä
 | email			| varchar		| sähköpostiosoite
 | auth_token	| varchar		| käyttäjän session tunniste
+| type			| member_type	| käyttäjäluokka (enum)
 
 Käyttäjästä tallennetaan erikseen näyttönimi ja käyttäjänimi, sillä käyttäjä voi haluta vaihtaa nimeään. Kirjautumiseen käytettävä username pysyy kuitenkin samana.
 
@@ -34,7 +41,7 @@ Esittää jonkin kappaleen yhtä tekijää.
 | original_url	| varchar		| alkuperäiskappaleen latausosoite
 | render_url 	| varchar		| mp3-pakatun version latausosoite, voi olla NULL
 
-Song on yksi järjestelmään ladattu kappale. Kappaleeseen liittyy yksi tai useampi käyttäjä (User) Author-roolissa. Kappaleessa voi olla myös listattu useampia käytettyjä instrumentteja (Instrument)
+Song on yksi järjestelmään ladattu kappale. Kappaleeseen liittyy yksi tai useampi käyttäjä (Member) Author-roolissa. Kappaleessa voi olla myös listattu useampia käytettyjä instrumentteja (Instrument)
 
 ### TrimmedName
 |attribuutti	| arvojoukko 	| kuvailu
