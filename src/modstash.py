@@ -41,6 +41,17 @@ class Modstash:
 		details["email"] = "e@mail.com" 
 		print("trying to add ", name)
 		return "jea: " + str(UserModel.add_user(details))
+
+	@cherrypy.expose
+	def login(self, username=None, password=None):
+		if cherrypy.request.method != "POST":
+			raise cherrypy.HTTPError(404)
+
+		print("USERNAME: " + str(username))
+		if password==None: 
+			print("PASSWORD: NO")
+		else:
+			print("PASSWORD: YES")
 	
 
 

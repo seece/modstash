@@ -9,7 +9,7 @@ class View():
 	public_config = {'title': 'modstash', 
 			'stylepath' : '/static/css/style.css'}
 
-	'''Initializes a new View from the given template'''
+	'''Initializes a new View from the given template path'''
 	def __init__(self, path):
 		self.path = path
 		self.template = Template(filename=path, output_encoding='utf-8', lookup=self.template_lookup) 
