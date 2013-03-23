@@ -1,1 +1,8 @@
-tsoha
+# modstash
+
+You can tests with
+        foreman tests.Procfile
+
+or without environment variables you can use just python
+        python tests.py
+		

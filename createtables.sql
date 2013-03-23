@@ -14,7 +14,7 @@ CREATE TABLE ms.Member (
     joined          timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
     email           varchar,
     auth_token      varchar,
-	member_type		member_type DEFAULT 'member'
+    member_type     member_type DEFAULT 'member'
 );
 
 CREATE TABLE ms.Song (

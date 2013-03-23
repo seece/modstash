@@ -8,7 +8,7 @@ CREATE SCHEMA ms;
 CREATE TYPE member_type AS ENUM ('banned','guest','member','moderator','admin');
 CREATE TYPE influence_type AS ENUM ('remix','inspiration','sample','cover');
 
-CREATE TABLE ms.User (
+CREATE TABLE ms.Member (
     username        varchar PRIMARY KEY,
     screen_name     varchar NOT NULL,
     password_hash   varchar NOT NULL,
