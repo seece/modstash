@@ -3,15 +3,17 @@ import os
 import cherrypy
 from model import user
 from mako.template import Template
+from mako.lookup import TemplateLookup
 
-index_template = Template(filename='templates/index.html', output_encoding='utf-8')
+template_lookup = TemplateLookup(directories=['templates'])
+index_template = Template(filename='templates/index.html', output_encoding='utf-8', 
+		lookup=template_lookup)
 #index_template = Template(filename='./templates/index.mako')
 
 UserModel = user.UserModel
 
 public_config = {'title': 'modstash',
 		'stylepath' : '/static/css/style.css'}
-
 
 class lists:
 	@cherrypy.expose
