@@ -2,18 +2,12 @@
 import os
 import cherrypy
 from model import user
+from view import View
 from mako.template import Template
 from mako.lookup import TemplateLookup
 
-template_lookup = TemplateLookup(directories=['templates'])
-index_template = Template(filename='templates/index.html', output_encoding='utf-8', 
-		lookup=template_lookup)
-#index_template = Template(filename='./templates/index.mako')
-
 UserModel = user.UserModel
-
-public_config = {'title': 'modstash',
-		'stylepath' : '/static/css/style.css'}
+index_view = View('templates/index.html')
 
 class lists:
 	@cherrypy.expose
@@ -24,7 +18,7 @@ class lists:
 class Modstash:
 	@cherrypy.expose
 	def index(self):
-		return index_template.render(config=public_config)
+		return index_view.render()
 
 	@cherrypy.expose
 	def users(self, who=None):
