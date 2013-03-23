@@ -1,6 +1,13 @@
 import unittest
-from test import test_password
+from test import test_password, test_database
 
-suite = unittest.TestLoader().loadTestsFromTestCase(test_password.PasswordTests)
-unittest.TextTestRunner(verbosity=2).run(suite)
+suites = []
+pwtest = unittest.TestLoader().loadTestsFromTestCase(test_password.CredentialTests)
+dbtest= unittest.TestLoader().loadTestsFromTestCase(test_database.DatabaseTests)
+suites.append(pwtest)
+suites.append(dbtest)
+
+for s in suites:
+	unittest.TextTestRunner(verbosity=2).run(s)
+
 

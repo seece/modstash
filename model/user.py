@@ -89,13 +89,15 @@ class UserModel:
 
 		return (h.hexdigest(), salt)
 
+	
+	'''Checks if a given username is free and valid'''
 	@classmethod
 	def validate_username(cls, username):
+		if len(username) < 3:
+			return False
+
 		if cls.get_user(username) != None:
 			raise UserAlreadyExistsException()
-
-		if len(username) == 0:
-			return False
 
 		return True
 
