@@ -37,6 +37,11 @@ class User:
 
 		self.fields = fields
 
+	'''Initializes the object from database query result'''
+	def load_from_result(self, result):
+		print(str(result))
+		pass
+
 	def print_info(self):
 		print(self.username + ", " + self.screen_name + ", " + self.email)
 
@@ -55,6 +60,37 @@ class UserModel:
 		conn.close()
 
 		return victim
+
+	@classmethod
+	def get_user_object(cls, username):
+		result = cls.get_user(username)
+
+		if result==None:
+			return None
+
+		obj = User()
+		obj.load_from_result(result)
+		return obj
+
+
+	@classmethod
+	def validate_credentials(cls, username, password):
+		user = cls.get_user(username)
+
+		if user==None:
+			return False
+
+		newhash = cls.hash_password(password, user["hash_salt"])
+
+		print("OLD: ", user["password_hash"])
+		print("NEW: ", newhash)
+
+		if newhash != user["password_hash"]:
+			return False
+
+
+		return True
+
 
 	@classmethod
 	def validate_email(cls, address):
@@ -78,10 +114,20 @@ class UserModel:
 			salt = salt + random.choice(characters)
 		return salt
 
+	@classmethod
+	def hash_password(cls, password, salt):
+		if salt==None:
+			salt=""
+
+		wholestring = password + salt
+		h = hashlib.new('sha256')
+		h.update(wholestring.encode('utf-8'))
+		return h.hexdigest()
+
 
 	'''Creates a password hash and a salt. Returned as a tuple.'''
 	@classmethod
-	def hash_password(cls, password):
+	def generate_hash(cls, password):
 		salt = cls.generate_salt(96)
 		wholestring = password + salt
 		h = hashlib.new('sha256')
@@ -122,7 +168,7 @@ class UserModel:
 		conn = database.connection()
 		cur = database.cursor(conn)
 		
-		pwhash = cls.hash_password(details["password"])
+		pwhash = cls.generate_hash(details["password"])
 		screen_name = details["username"]
 
 		query = "INSERT INTO Member \

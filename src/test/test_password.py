@@ -18,7 +18,7 @@ class CredentialTests(unittest.TestCase):
 		h = hashlib.new('sha256')
 		h.update(password.encode('utf-8'))
 
-		properdigest = UserModel.hash_password(password)
+		properdigest = UserModel.generate_hash(password)
 		self.assertNotEqual(h.hexdigest(), properdigest)
 
 	def test_validate_username(self):

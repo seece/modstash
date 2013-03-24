@@ -52,6 +52,15 @@ class Modstash:
 			print("PASSWORD: NO")
 		else:
 			print("PASSWORD: YES")
+
+		valid = UserModel.validate_credentials(username, password)
+
+		print("VALID: " + str(valid))
+
+		if valid:
+			return "success"
+		else:
+			return "invalid username or password"
 	
 
 
