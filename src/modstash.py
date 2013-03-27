@@ -5,6 +5,7 @@ from model import user
 from view import *
 from mako.template import Template
 from mako.lookup import TemplateLookup
+from flash import flash
 
 UserModel = user.UserModel
 
@@ -47,10 +48,14 @@ class Modstash:
 
 	@cherrypy.expose
 	def logout(self):
-		username=username=cherrypy.session.get('username')
+		username=cherrypy.session.get('username')
+
 
 		if not username:
-			return "plz login before logging out"
+			flash("You haven't logged in.", 'error')
+			return error_view.render(error_message="You haven't logged in.",
+						flash=cherrypy.session.get('flash'))
+					
 
 		cherrypy.session.clear()
 		return "logged out successfully"
@@ -77,7 +82,10 @@ class Modstash:
 			cherrypy.session.save()
 			return "success"
 		else:
-			return "invalid username or password"
+
+			return error_view.render(error_message="Invalid credentials.",
+					backlink="/index",
+					subtitle="Error")
 	
 
 

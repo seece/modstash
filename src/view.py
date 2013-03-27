@@ -1,4 +1,5 @@
 
+import cherrypy
 from mako.template import Template
 from mako.lookup import TemplateLookup
 
@@ -18,8 +19,10 @@ class View():
 	The public configuration is added to the named argument dict.'''
 	def render(self, **params):
 		params['config'] = self.public_config
-		params['state'] = {}
+		#params['state'] = {}
+
 		return self.template.render(**params)
 
 
 index_view = View('templates/index.html')
+error_view = View('templates/error.html')

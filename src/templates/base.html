@@ -5,13 +5,25 @@
 <head>
 	<%block name="head">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>${config["title"]}</title>
+		% if subtitle:
+			<title>${config["subtitle"]} | ${config["title"]}</title>
+		% else:
+			<title>${config["title"]}</title>
+		%endif
+		
 		<link rel="stylesheet" href="${config["stylepath"]}" />
 	</%block>
 	<%block name="additional_head">
 	</%block>
 </head>
 <%include file="/header.html"/>
+
+% if flash:
+	% for f in flash:
+		<% msg = f.to_mako() %>
+		<div class="flash">${msg}</div> 
+	% endfor
+% endif
 
 ${self.body()}
 
