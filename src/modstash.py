@@ -2,12 +2,12 @@
 import os
 import cherrypy
 from model import user
-from view import View
+from view import *
 from mako.template import Template
 from mako.lookup import TemplateLookup
 
 UserModel = user.UserModel
-index_view = View('templates/index.html')
+
 
 class lists:
 	@cherrypy.expose
@@ -18,12 +18,15 @@ class lists:
 class Modstash:
 	@cherrypy.expose
 	def index(self):
-		return index_view.render()
+		username=username=cherrypy.session.get('username')
+		logged_in = username!=None
+		print("usr: " + str(username) + ", logged: " + str(logged_in) )
+		return index_view.render(username=username, logged_in=logged_in)
 
 	@cherrypy.expose
 	def users(self, who=None):
 
-		if who==None:
+		if not who:
 			return "No who!"
 
 		person = UserModel.get_user(who)
@@ -43,6 +46,18 @@ class Modstash:
 		return "jea: " + str(UserModel.add_user(details))
 
 	@cherrypy.expose
+	def logout(self):
+		username=username=cherrypy.session.get('username')
+
+		if not username:
+			return "plz login before logging out"
+
+		cherrypy.session.clear()
+		return "logged out successfully"
+
+
+
+	@cherrypy.expose
 	def login(self, username=None, password=None):
 		if cherrypy.request.method != "POST":
 			raise cherrypy.HTTPError(404)
@@ -58,6 +73,8 @@ class Modstash:
 		print("VALID: " + str(valid))
 
 		if valid:
+			cherrypy.session['username'] = username
+			cherrypy.session.save()
 			return "success"
 		else:
 			return "invalid username or password"

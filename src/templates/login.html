@@ -1,8 +1,15 @@
-﻿<form action="/login" method="post">
+﻿
+% if logged_in:
+	logged in as ${username}
+	<br />
+	<a href="/logout">Logout</a>
+% else:
+	<form action="/login" method="post">
 	<label for="username">Username: </label>
 	<input id="username" type="text" name="username">
 	<br>
 	<label for="password">Password: </label>
 	<input id="password" type="password" name="password">
 	<input type="submit" value="login">
-</form>
+	</form>
+% endif

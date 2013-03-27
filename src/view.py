@@ -18,6 +18,8 @@ class View():
 	The public configuration is added to the named argument dict.'''
 	def render(self, **params):
 		params['config'] = self.public_config
+		params['state'] = {}
 		return self.template.render(**params)
 
 
+index_view = View('templates/index.html')
