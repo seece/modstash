@@ -25,3 +25,15 @@ li.notice {
 	border-color:#2222cc;
 }
 
+.no_link_hilight:link, .no_link_hilight:visited, no_link_hilight:hover {
+	text-decoration: none;
+	color:inherit;
+}
+
+.navlink:link, .navlink:visited, .navlink:hover {
+	color:inherit;
+}
+
+#logo {
+	
+}
