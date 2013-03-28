@@ -1,6 +1,6 @@
 # modstash
 
-You can tests with
+You can run tests with
         foreman tests.Procfile
 
 or without environment variables you can use just python
