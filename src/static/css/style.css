@@ -1,3 +1,27 @@
 ﻿body {
 	background-color:#eee;
 }
+
+#flashmessages {
+	
+}
+
+li.flash {
+	list-style-type: none;
+	display:inline;
+	padding:4px;
+	border:1px solid black;
+}
+
+li.success {
+	border-color:#22cc22;
+}
+
+li.error {
+	border-color:#cc2222;
+}
+
+li.notice {
+	border-color:#2222cc;
+}
+

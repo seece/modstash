@@ -16,20 +16,28 @@
 	<%block name="additional_head">
 	</%block>
 </head>
-<%include file="/header.html"/>
+<body>
+	<div id="main">
+		<%include file="/header.html"/>
 
-% if flash:
-	% for f in flash:
-		<% msg = f.to_mako() %>
-		<div class="flash">${msg}</div> 
-	% endfor
-% endif
-
-${self.body()}
-
-<%block name="footer">
-	<div class="footer">
-		the footer
+		## prints all the accumulated flash messages to the page
+		<ul id="flashmessages">
+		% if flash:
+			% for f in flash:
+				<% msg = f.to_mako() %>
+				<% fclass = f.message_type  %>
+				<li class="flash ${fclass}">${msg}</li> 
+			% endfor
+		% endif
+		</ul>
+		<div id="content">
+			${self.body()}
+		</div>
+		<%block name="footer">
+			<div class="footer">
+				the footer
+			</div>
+		</%block>
 	</div>
-</%block>
+</body>
 </html>

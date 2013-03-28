@@ -9,6 +9,20 @@ from flash import flash
 
 UserModel = user.UserModel
 
+'''The main controller class. '''
+class Controller:
+	def __init__(self):
+		pass
+
+	'''Renders a template with some parameters pulled from the active session'''
+	def render(self, view, **params):
+		username=cherrypy.session.get('username')
+		logged_in = username!=None
+
+		params['flash'] = flash=cherrypy.session.get('flash')
+		params['username'] = username
+		params['logged_in'] = logged_in
+		return view.render(**params)
 
 class lists:
 	@cherrypy.expose
@@ -16,17 +30,13 @@ class lists:
 		return "lists here " + str(who)
 
 
-class Modstash:
+class Modstash(Controller):
 	@cherrypy.expose
 	def index(self):
-		username=username=cherrypy.session.get('username')
-		logged_in = username!=None
-		print("usr: " + str(username) + ", logged: " + str(logged_in) )
-		return index_view.render(username=username, logged_in=logged_in)
+		return self.render(index_view)
 
 	@cherrypy.expose
 	def users(self, who=None):
-
 		if not who:
 			return "No who!"
 
@@ -53,19 +63,22 @@ class Modstash:
 
 		if not username:
 			flash("You haven't logged in.", 'error')
-			return error_view.render(error_message="You haven't logged in.",
-						flash=cherrypy.session.get('flash'))
+			return self.render(error_view, error_message="Please login before logging out, because you cannot logout before you have logged in.")
 					
 
 		cherrypy.session.clear()
-		return "logged out successfully"
-
+		flash("Logged out successfully!", 'success')
+		return self.render(index_view)
 
 
 	@cherrypy.expose
 	def login(self, username=None, password=None):
 		if cherrypy.request.method != "POST":
 			raise cherrypy.HTTPError(404)
+
+		if cherrypy.session.get('username'):
+			flash("You have already logged in.")
+			return self.render(index_view)
 
 		print("USERNAME: " + str(username))
 		if password==None: 
@@ -80,12 +93,11 @@ class Modstash:
 		if valid:
 			cherrypy.session['username'] = username
 			cherrypy.session.save()
-			return "success"
+			flash("Logged in successfully!", 'success')
+			return self.render(index_view)
 		else:
-
-			return error_view.render(error_message="Invalid credentials.",
-					backlink="/index",
-					subtitle="Error")
+			flash("Invalid credentials.", 'error')
+			return self.render(index_view)
 	
 
 

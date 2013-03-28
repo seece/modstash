@@ -4,6 +4,7 @@ from mako.template import Template
 from mako.lookup import TemplateLookup
 
 
+'''A thin wrapper around a mako Template. Adds some settings to the render parameters.'''
 class View():
 	template_lookup = TemplateLookup(directories=['templates'])
 
