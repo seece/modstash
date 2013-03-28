@@ -1,25 +1,9 @@
 import string
 import hashlib
 import random
-from functools import wraps
 import psycopg2
 import database
-
-'''A decorator that provides a database connection and 
-a related cursor to the function'''
-def dbconnection(f):
-	@wraps(f)
-	def connection_wrapper(*args, **kwargs):
-		conn = database.connection()
-		cur = database.cursor(conn) 
-		kwargs['conn'] = conn
-		kwargs['cur'] = cur 
-
-		result = f(*args, **kwargs)
-		cur.close()
-		conn.close()
-		return result
-	return connection_wrapper
+from database import dbconnection
 
 class UserAlreadyExistsException(Exception):
 	pass
@@ -102,7 +86,6 @@ class UserModel:
 
 		if newhash != user["password_hash"]:
 			return False
-
 
 		return True
 

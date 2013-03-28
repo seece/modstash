@@ -1,5 +1,6 @@
 import os
 import logging
+from functools import wraps
 import psycopg2
 import psycopg2.extras
 
@@ -34,3 +35,19 @@ def test_connection():
 	conn = connection()
 	conn.close()
 	return True
+
+'''A decorator that provides a database connection and 
+a related cursor to the function'''
+def dbconnection(f):
+	@wraps(f)
+	def connection_wrapper(*args, **kwargs):
+		conn = connection()
+		cur = cursor(conn) 
+		kwargs['conn'] = conn
+		kwargs['cur'] = cur 
+
+		result = f(*args, **kwargs)
+		cur.close()
+		conn.close()
+		return result
+	return connection_wrapper

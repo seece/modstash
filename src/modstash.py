@@ -78,7 +78,8 @@ class Modstash(Controller):
 		try:
 			song = load_module(songbytes)
 		except Exception as e:
-			flash('Invalid module file, only amiga modules are supported.', 'error')
+			flash("%s is not a valid module, only amiga modules are supported." % songfile.filename
+					, 'error')
 			return self.render(upload_view)
 
 
