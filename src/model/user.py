@@ -1,8 +1,25 @@
 import string
 import hashlib
 import random
+from functools import wraps
 import psycopg2
 import database
+
+'''A decorator that provides a database connection and 
+a related cursor to the function'''
+def dbconnection(f):
+	@wraps(f)
+	def connection_wrapper(*args, **kwargs):
+		conn = database.connection()
+		cur = database.cursor(conn) 
+		kwargs['conn'] = conn
+		kwargs['cur'] = cur 
+
+		result = f(*args, **kwargs)
+		cur.close()
+		conn.close()
+		return result
+	return connection_wrapper
 
 class UserAlreadyExistsException(Exception):
 	pass
@@ -38,16 +55,11 @@ class User:
 	
 class UserModel:
 	@classmethod
-	def get_user(cls, username):
-		conn = database.connection()
-		cur = database.cursor(conn) 
-
+	@dbconnection
+	def get_user(cls, username, conn, cur):
 		querystr = "SELECT * FROM Member WHERE username=%s"
 		cur.execute(querystr, [username])
 		victim = cur.fetchone()
-
-		cur.close()
-		conn.close()
 
 		return victim
 
@@ -150,9 +162,21 @@ class UserModel:
 
 		return True
 
+	'''Updates user's last_logged field'''
+	@classmethod
+	@dbconnection
+	def log_visit(cls, username, conn, cur):
+		query = 'UPDATE Member SET last_logged = CURRENT_TIMESTAMP \
+				WHERE username = %s;'
+		try:
+			cur.execute(query, (username,))
+		except Exception as e:
+			print("Cannot update login information: %s" % (str(e)))
+
+		conn.commit()
+
 	@classmethod
 	def add_user(cls, details):
-
 		required = ["username", "password", "email"]
 
 		for r in required:

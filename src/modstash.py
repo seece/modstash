@@ -1,6 +1,8 @@
 
+import sys
 import os
 import cherrypy
+from modtag.modtag import load_module
 from model import user
 from view import *
 from mako.template import Template
@@ -47,7 +49,6 @@ class Modstash(Controller):
 			return self.render(error_view, error_message=msg)
 
 		sanitized = UserModel.sanitize_user(person)
-
 		return self.render(user_view, user=sanitized)
 
 	#@cherrypy.expose
@@ -60,9 +61,32 @@ class Modstash(Controller):
 		return "jea: " + str(UserModel.add_user(details))
 
 	@cherrypy.expose
+	def uploadform(self):
+		# TODO check user login
+		return self.render(upload_view)
+
+	@cherrypy.expose
+	def upload(self, songfile):
+		if not songfile:
+			flash('Invalid file.', 'error')
+			return self.render(index_view)
+		
+		songbytes = songfile.file.read()
+
+		out = "<pre>%s %s %s</pre><br><pre>%s</pre>"
+
+		try:
+			song = load_module(songbytes)
+		except Exception as e:
+			flash('Invalid module file, only amiga modules are supported.', 'error')
+			return self.render(upload_view)
+
+
+		return out % (len(songbytes), songfile.filename, songfile.content_type, song.name)
+
+	@cherrypy.expose
 	def logout(self):
 		username=cherrypy.session.get('username')
-
 
 		if not username:
 			flash("You haven't logged in.", 'error')
@@ -86,6 +110,7 @@ class Modstash(Controller):
 		valid = UserModel.validate_credentials(username, password)
 
 		if valid:
+			UserModel.log_visit(username)
 			cherrypy.session['username'] = username
 			cherrypy.session.save()
 			flash("Logged in successfully!", 'success')

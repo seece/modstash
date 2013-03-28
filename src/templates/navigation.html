@@ -1,6 +1,9 @@
-<nav>
+﻿<nav>
 	<ul class="menu">
-		<li><a href="/">main</a></li>
-		<li><a href="/upload">upload</a></li>
+		<li><a class="navlink" href="/">main</a></li>
+		% if logged_in:
+		<li><a class="navlink" href="/uploadform">upload</a></li>
+		% endif
 	</ul>
 </nav>
+
