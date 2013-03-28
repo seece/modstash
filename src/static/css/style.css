@@ -37,3 +37,17 @@ li.notice {
 #logo {
 	
 }
+
+nav {
+
+}
+
+ul.menu {
+	list-style-type:none;
+	margin:0px;
+	padding:0px;
+}
+
+ul.menu li {
+	display: inline;
+}

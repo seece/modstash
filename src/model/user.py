@@ -14,16 +14,6 @@ class UserDetailException(Exception):
 '''A user record'''
 class User:
 	def __init__(self):
-		'''
-		self.username = None
-		self.screen_name = None
-		self.password_hash = None
-		self.hash_salt = None
-		self.last_logged = None
-		self.joined = None
-		self.email = None
-		self.auth_token = None
-		'''
 		fields = {}
 
 		fields["username"] = None
@@ -60,6 +50,19 @@ class UserModel:
 		conn.close()
 
 		return victim
+
+	'''Removes all private information from a user dictionary'''
+	@classmethod
+	def sanitize_user(cls, user):
+		newuser = {
+				'username'	: user['username'],
+				'screen_name' : user['screen_name'],
+				'last_logged' : user['last_logged'],
+				'joined' : user['joined'],
+				'member_type': user['member_type']
+				}
+		
+		return newuser
 
 	@classmethod
 	def get_user_object(cls, username):

@@ -17,7 +17,7 @@ CREATE TABLE ms.Member (
     joined          timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
     email           varchar,
     auth_token      varchar,
-	type			member_type DEFAULT 'member'
+    member_type     member_type DEFAULT 'member'
 );
 
 CREATE TABLE ms.Song (
@@ -32,7 +32,7 @@ CREATE TABLE ms.Song (
 CREATE TABLE ms.Author (
     songid          integer references ms.Song(id) NOT NULL,
     -- if username is NULL, we don't create a hyperlink on the song page
-    username        varchar references ms.User(username),   
+    username        varchar references ms.Member(username),   
     position        integer NOT NULL, 
     shown_name      varchar NOT NULL,
     PRIMARY KEY(songid, position)
@@ -73,4 +73,6 @@ CREATE TABLE ms.SampleHash (
     filesize    integer NOT NULL,
     PRIMARY KEY(hash, filesize)
 );
+
+
 ```

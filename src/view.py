@@ -26,4 +26,5 @@ class View():
 
 
 index_view = View('templates/index.html')
+user_view = View('templates/user.html')
 error_view = View('templates/error.html')

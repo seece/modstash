@@ -19,18 +19,16 @@ class Controller:
 		username=cherrypy.session.get('username')
 		logged_in = username!=None
 
+		if not 'error_message' in params:
+			params['error_message'] = ''
+
 		params['flash'] = flash=cherrypy.session.get('flash')
 		params['username'] = username
 		params['logged_in'] = logged_in
 		return view.render(**params)
 
-class lists:
-	@cherrypy.expose
-	def index(self, who):
-		return "lists here " + str(who)
-
-
 class Modstash(Controller):
+
 	@cherrypy.expose
 	def index(self):
 		return self.render(index_view)
@@ -38,14 +36,19 @@ class Modstash(Controller):
 	@cherrypy.expose
 	def users(self, who=None):
 		if not who:
-			return "No who!"
+			# TODO add user listing here?
+			flash('Invalid user.', 'error')
+			return self.render(error_view)
 
 		person = UserModel.get_user(who)
 
 		if person == None:
-			return "no hit"
+			msg = "User '%s' not found!" % (str(who))
+			return self.render(error_view, error_message=msg)
 
-		return "yeah " + str(who) + " = " + str(len(person)) + " fields!" 
+		sanitized = UserModel.sanitize_user(person)
+
+		return self.render(user_view, user=sanitized)
 
 	#@cherrypy.expose
 	def adduser(self, name):
@@ -80,15 +83,7 @@ class Modstash(Controller):
 			flash("You have already logged in.")
 			return self.render(index_view)
 
-		print("USERNAME: " + str(username))
-		if password==None: 
-			print("PASSWORD: NO")
-		else:
-			print("PASSWORD: YES")
-
 		valid = UserModel.validate_credentials(username, password)
-
-		print("VALID: " + str(valid))
 
 		if valid:
 			cherrypy.session['username'] = username
