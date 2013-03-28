@@ -7,4 +7,6 @@
 logs/
 .env
 run.bat
+static/songs/
+songs/
 

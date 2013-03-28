@@ -38,6 +38,7 @@ Esittää jonkin kappaleen yhtä tekijää.
 | title			| varchar		| kappaleen nimi
 | upload_date	| date			| ajanhetki jolloin kappale ladattiin palveluun
 | downloads		| integer		| kuinka monta kertaa kappale on ladattu
+| filename		| varchar		| alkuperäinen tiedostonimi
 | original_url	| varchar		| alkuperäiskappaleen latausosoite
 | render_url 	| varchar		| mp3-pakatun version latausosoite, voi olla NULL
 

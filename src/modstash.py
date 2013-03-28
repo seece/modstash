@@ -3,31 +3,13 @@ import sys
 import os
 import cherrypy
 from modtag.modtag import load_module
-from model import user
+from model.user import UserModel
+from model.song import SongModel, save_song
 from view import *
+from controller import Controller
 from mako.template import Template
 from mako.lookup import TemplateLookup
 from flash import flash
-
-UserModel = user.UserModel
-
-'''The main controller class. '''
-class Controller:
-	def __init__(self):
-		pass
-
-	'''Renders a template with some parameters pulled from the active session'''
-	def render(self, view, **params):
-		username=cherrypy.session.get('username')
-		logged_in = username!=None
-
-		if not 'error_message' in params:
-			params['error_message'] = ''
-
-		params['flash'] = flash=cherrypy.session.get('flash')
-		params['username'] = username
-		params['logged_in'] = logged_in
-		return view.render(**params)
 
 class Modstash(Controller):
 
@@ -67,6 +49,8 @@ class Modstash(Controller):
 
 	@cherrypy.expose
 	def upload(self, songfile):
+		username=cherrypy.session.get('username')
+
 		if not songfile:
 			flash('Invalid file.', 'error')
 			return self.render(index_view)
@@ -82,6 +66,7 @@ class Modstash(Controller):
 					, 'error')
 			return self.render(upload_view)
 
+		save_song(songbytes, song, songfile, username)
 
 		return out % (len(songbytes), songfile.filename, songfile.content_type, song.name)
 

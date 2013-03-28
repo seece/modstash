@@ -44,3 +44,23 @@ class DatabaseTests(unittest.TestCase):
 			self.assertTrue(cur.rowcount > 0, "table not found: " + name)
 
 		cur.close()
+		
+	def test_song_table(self):
+		try:
+			cur = database.cursor(self.conn)
+		except Exception as e:
+			raise
+			
+		columns = ['id', 'title', 'upload_date', 'downloads', 'original_url', 'render_url', 'filename']
+
+		cur.execute("select * from information_schema.columns where table_name='song'")
+		result = cur.fetchall()
+		
+		for name in columns:
+			hit = False
+			for r in result:		
+				if name==r['column_name']:
+					hit = True			
+				
+			self.assertTrue(hit, "Column %s not found from song table" % (name) )
+

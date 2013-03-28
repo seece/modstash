@@ -47,6 +47,7 @@ def dbconnection(f):
 		kwargs['cur'] = cur 
 
 		result = f(*args, **kwargs)
+
 		cur.close()
 		conn.close()
 		return result
