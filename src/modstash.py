@@ -2,6 +2,7 @@
 import sys
 import os
 import cherrypy
+
 from modtag.modtag import load_module
 from model.user import UserModel
 from model.song import SongModel, save_song
@@ -10,9 +11,11 @@ from controller import Controller
 from mako.template import Template
 from mako.lookup import TemplateLookup
 from flash import flash
+from restrict import restrict
+
+cherrypy.tools.restrict = restrict
 
 class Modstash(Controller):
-
 	@cherrypy.expose
 	def index(self):
 		return self.render(index_view)
@@ -43,8 +46,8 @@ class Modstash(Controller):
 		return "jea: " + str(UserModel.add_user(details))
 
 	@cherrypy.expose
+	@cherrypy.tools.restrict()
 	def uploadform(self):
-		# TODO check user login
 		return self.render(upload_view)
 
 	@cherrypy.expose
