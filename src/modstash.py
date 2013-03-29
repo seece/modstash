@@ -5,7 +5,7 @@ import cherrypy
 
 from modtag.modtag import load_module
 from model.user import UserModel
-from model.song import SongModel, save_song
+from model.song import SongModel
 from view import *
 from controller import Controller
 from mako.template import Template
@@ -51,6 +51,7 @@ class Modstash(Controller):
 		return self.render(upload_view)
 
 	@cherrypy.expose
+	@cherrypy.tools.restrict()
 	def upload(self, songfile):
 		username=cherrypy.session.get('username')
 
@@ -69,7 +70,7 @@ class Modstash(Controller):
 					, 'error')
 			return self.render(upload_view)
 
-		save_song(songbytes, song, songfile, username)
+		SongModel.add_song(song, songbytes, songfile, [username,])
 
 		return out % (len(songbytes), songfile.filename, songfile.content_type, song.name)
 
