@@ -1,21 +1,23 @@
-from modtag import *
+﻿from modtag import *
 from modtag.tracker import *
 from struct import unpack
 
-"""Interface for different module formats."""
 class ModuleFormat():
+	"""Interface for different module formats."""
 	@property
 	def name(self):
 		raise NotImplementedError("module format must have a name")
 
-	"""Checks if the given bytes are in this very format"""
+	
 	@classmethod
 	def identify(cls, bytes): 
+		"""Checks if the given bytes are in this very format"""
 		raise NotImplementedError("identify must be implemented")
 
-	"""Returns a Song from file data"""
+	
 	@classmethod
 	def load_module(cls, bytes, options=None): 
+		"""Returns a Song from file data"""
 		raise NotImplementedError("load_module must be implemented")
 
 class ProtrackerFormat(ModuleFormat):

@@ -12,8 +12,8 @@ class UserDetailException(Exception):
 	def __init__(self, message):
 		Exception.__init__(self, message)
 
-'''A user record'''
 class User:
+	"""A user record"""
 	def __init__(self):
 		fields = {}
 
@@ -28,8 +28,8 @@ class User:
 
 		self.fields = fields
 
-	'''Initializes the object from database query result'''
 	def load_from_result(self, result):
+		"""Initializes the object from database query result"""
 		print(str(result))
 		pass
 
@@ -47,9 +47,9 @@ class UserModel:
 
 		return victim
 
-	'''Removes all private information from a user dictionary'''
 	@classmethod
 	def sanitize_user(cls, user):
+		"""Removes all private information from a user dictionary"""
 		newuser = {
 				'username'	: user['username'],
 				'screen_name' : user['screen_name'],
@@ -103,7 +103,7 @@ class UserModel:
 			return False
 		return True
 
-	'''Generates a randomized alphanumeric string of given length'''
+	"""Generates a randomized alphanumeric string of given length"""
 	@classmethod
 	def generate_salt(cls, length):
 		salt = ''
@@ -123,9 +123,9 @@ class UserModel:
 		return h.hexdigest()
 
 
-	'''Creates a password hash and a salt. Returned as a tuple.'''
 	@classmethod
 	def generate_hash(cls, password):
+		"""Creates a password hash and a salt. Returned as a tuple."""
 		salt = cls.generate_salt(96)
 		wholestring = password + salt
 		h = hashlib.new('sha256')
@@ -134,9 +134,9 @@ class UserModel:
 		return (h.hexdigest(), salt)
 
 	
-	'''Checks if a given username is free and valid'''
 	@classmethod
 	def validate_username(cls, username):
+		"""Checks if a given username is free and valid"""
 		if len(username) < 3:
 			return False
 
@@ -145,10 +145,11 @@ class UserModel:
 
 		return True
 
-	'''Updates user's last_logged field'''
+
 	@classmethod
 	@dbconnection
 	def log_visit(cls, username, conn, cur):
+		"""Updates user's last_logged field"""
 		query = 'UPDATE Member SET last_logged = CURRENT_TIMESTAMP \
 				WHERE username = %s;'
 		try:

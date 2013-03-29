@@ -2,5 +2,6 @@
 CherryPy==3.2.3
 Mako==0.7.3
 MarkupSafe==0.15
+Unidecode==0.04.12
 psycopg2==2.4.6
 wsgiref==0.1.2

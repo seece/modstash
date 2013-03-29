@@ -1,4 +1,4 @@
-import struct
+﻿import struct
 from struct import unpack
 from modtag.format import ModuleFormat, ProtrackerFormat
 

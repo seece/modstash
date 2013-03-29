@@ -1,5 +1,6 @@
-
+﻿
 class Song:
+	"""A self-contained tracker song."""
 	PROTRACKER = "MOD"
 	UNKNOWN = "???"
 
