@@ -10,8 +10,8 @@ from view import *
 from controller import Controller
 from mako.template import Template
 from mako.lookup import TemplateLookup
-from flash import flash
-from restrict import restrict
+from lib.flash import flash
+from lib.tool.restrict import restrict
 
 cherrypy.tools.restrict = restrict
 
