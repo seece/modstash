@@ -1,6 +1,6 @@
 ﻿import unittest
-from model.song import Song
-from model.song import InvalidAuthorException, InvalidFilenameException
+from lib.model.song import Song
+from lib.model.song import InvalidAuthorException, InvalidFilenameException
 
 class SongTests(unittest.TestCase):
 	def setUp(self):

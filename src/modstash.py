@@ -3,9 +3,9 @@ import sys
 import os
 import cherrypy
 
-from modtag.modtag import load_module
-from model.user import User
-from model.song import Song
+from lib.modtag.modtag import load_module
+from lib.model.user import User
+from lib.model.song import Song
 from view import *
 from controller import Controller
 from mako.template import Template

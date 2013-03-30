@@ -1,6 +1,6 @@
 import unittest
 import hashlib
-from model.user import User
+from lib.model.user import User
 
 class CredentialTests(unittest.TestCase):
 	

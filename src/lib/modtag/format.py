@@ -1,5 +1,5 @@
-﻿from modtag import *
-from modtag.tracker import *
+﻿from lib.modtag import *
+from lib.modtag.tracker import *
 from struct import unpack
 
 class ModuleFormat():

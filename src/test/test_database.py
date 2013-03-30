@@ -1,6 +1,6 @@
 import unittest
 import database
-from model.user import User
+from lib.model.user import User
 
 class DatabaseTests(unittest.TestCase):
 	def setUp(self):

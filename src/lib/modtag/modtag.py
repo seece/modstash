@@ -1,6 +1,6 @@
 ﻿import struct
 from struct import unpack
-from modtag.format import ModuleFormat, ProtrackerFormat
+from lib.modtag.format import ModuleFormat, ProtrackerFormat
 
 formats = []
 formats.append(ProtrackerFormat())

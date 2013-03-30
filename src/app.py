@@ -3,7 +3,7 @@ import atexit
 import cherrypy
 import psycopg2
 import database
-from model import user
+from lib.model import user
 from modstash import *
 
 port = 8080
