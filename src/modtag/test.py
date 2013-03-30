@@ -2,7 +2,7 @@
 
 import unittest
 import modtag
-from tracker import Song
+from tracker import TrackerSong
 
 class TestSequence(unittest.TestCase):
 	def setUp(self):
@@ -20,8 +20,8 @@ class TestSequence(unittest.TestCase):
 		return mod
 
 	def test_song_default(self):
-		mod = Song()
-		#self.assertTrue(mod.fmt == Song.PROTRACKER) 
+		mod = TrackerSong()
+		#self.assertTrue(mod.fmt == TrackerSong.PROTRACKER) 
 
 	def test_load_4chan(self):
 		songbytes = self.load_test_module()

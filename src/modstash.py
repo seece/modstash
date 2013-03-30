@@ -4,8 +4,8 @@ import os
 import cherrypy
 
 from modtag.modtag import load_module
-from model.user import UserModel
-from model.song import SongModel
+from model.user import User
+from model.song import Song
 from view import *
 from controller import Controller
 from mako.template import Template
@@ -16,6 +16,11 @@ from restrict import restrict
 cherrypy.tools.restrict = restrict
 
 class Modstash(Controller):
+	def __init__(self):
+		login = Login()
+		self.login = login.login
+		self.logout = login.logout
+
 	@cherrypy.expose
 	def index(self):
 		return self.render(index_view)
@@ -27,13 +32,13 @@ class Modstash(Controller):
 			flash('Invalid user.', 'error')
 			return self.render(error_view)
 
-		person = UserModel.get_user(who)
+		person = User.get_user(who)
 
 		if person == None:
 			msg = "User '%s' not found!" % (str(who))
 			return self.render(error_view, error_message=msg)
 
-		sanitized = UserModel.sanitize_user(person)
+		sanitized = User.sanitize_user(person)
 		return self.render(user_view, user=sanitized)
 
 	#@cherrypy.expose
@@ -43,7 +48,7 @@ class Modstash(Controller):
 		details["password"] = "PASSWORD"
 		details["email"] = "e@mail.com" 
 		print("trying to add ", name)
-		return "jea: " + str(UserModel.add_user(details))
+		return "jea: " + str(User.add_user(details))
 
 	@cherrypy.expose
 	@cherrypy.tools.restrict()
@@ -70,24 +75,12 @@ class Modstash(Controller):
 					, 'error')
 			return self.render(upload_view)
 
-		SongModel.add_song(song, songbytes, songfile, [username,])
+		Song.add_song(song, songbytes, songfile, [username,])
 
 		return out % (len(songbytes), songfile.filename, songfile.content_type, song.name)
 
-	@cherrypy.expose
-	def logout(self):
-		username=cherrypy.session.get('username')
-
-		if not username:
-			flash("You haven't logged in.", 'error')
-			return self.render(error_view, error_message="Please login before logging out, because you cannot logout before you have logged in.")
-					
-
-		cherrypy.session.clear()
-		flash("Logged out successfully!", 'success')
-		return self.render(index_view)
-
-
+		
+class Login(Controller):
 	@cherrypy.expose
 	def login(self, username=None, password=None):
 		if cherrypy.request.method != "POST":
@@ -97,10 +90,10 @@ class Modstash(Controller):
 			flash("You have already logged in.")
 			return self.render(index_view)
 
-		valid = UserModel.validate_credentials(username, password)
+		valid = User.validate_credentials(username, password)
 
 		if valid:
-			UserModel.log_visit(username)
+			User.log_visit(username)
 			cherrypy.session['username'] = username
 			cherrypy.session.save()
 			flash("Logged in successfully!", 'success')
@@ -108,6 +101,17 @@ class Modstash(Controller):
 		else:
 			flash("Invalid credentials.", 'error')
 			return self.render(index_view)
-	
+			
+	@cherrypy.expose
+	def logout(self):
+		username=cherrypy.session.get('username')
+
+		if not username:
+			flash("You haven't logged in.", 'error')
+			return self.render(error_view, error_message="Please login before logging out, because you cannot logout before you have logged in.")
+					
+		cherrypy.session.clear()
+		flash("Logged out successfully!", 'success')
+		return self.render(index_view)
 
 

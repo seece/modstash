@@ -13,31 +13,6 @@ class UserDetailException(Exception):
 		Exception.__init__(self, message)
 
 class User:
-	"""A user record"""
-	def __init__(self):
-		fields = {}
-
-		fields["username"] = None
-		fields["screen_name"] = None
-		fields["password_hash"] = None
-		fields["hash_salt"] = None
-		fields["last_logged"] = None
-		fields["joined"] = None
-		fields["email"] = None
-		fields["auth_token"] = None
-
-		self.fields = fields
-
-	def load_from_result(self, result):
-		"""Initializes the object from database query result"""
-		print(str(result))
-		pass
-
-	def print_info(self):
-		print(self.username + ", " + self.screen_name + ", " + self.email)
-
-	
-class UserModel:
 	@classmethod
 	@dbconnection
 	def get_user(cls, username, conn, cur):
@@ -59,18 +34,6 @@ class UserModel:
 				}
 		
 		return newuser
-
-	@classmethod
-	def get_user_object(cls, username):
-		result = cls.get_user(username)
-
-		if result==None:
-			return None
-
-		obj = User()
-		obj.load_from_result(result)
-		return obj
-
 
 	@classmethod
 	def validate_credentials(cls, username, password):

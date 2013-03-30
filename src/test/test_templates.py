@@ -1,6 +1,6 @@
 import unittest
 from mako.template import Template
-from model.user import UserModel
+from model.user import User
 
 class TemplateTests(unittest.TestCase):
 	def setUp(self):

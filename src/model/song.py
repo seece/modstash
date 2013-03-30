@@ -34,13 +34,12 @@ def get_song_path(songbytes, song, songfile, username):
 
 	return (songpath, filename)
 
-class SongModel:
+class Song:
 	@classmethod
 	def save_to_disk(cls, songbytes, songpath):
 		f = open(songpath, 'wb')
 		f.write(songbytes)
 		f.close()
-
 
 	@classmethod
 	def trim_title(cls, title):

@@ -17,7 +17,7 @@ class ModuleFormat():
 	
 	@classmethod
 	def load_module(cls, bytes, options=None): 
-		"""Returns a Song from file data"""
+		"""Returns a TrackerSong from file data"""
 		raise NotImplementedError("load_module must be implemented")
 
 class ProtrackerFormat(ModuleFormat):
@@ -101,10 +101,10 @@ class ProtrackerFormat(ModuleFormat):
 		if not options:
 			options = {'verbose': False}
 
-		#if modformat != Song.PROTRACKER:
+		#if modformat != TrackerSong.PROTRACKER:
 		#		return None
 
-		song = Song()
+		song = TrackerSong()
 		#song.fmt = modformat
 		#song.name = str(unpack('20s', songbytes[0:20]), 'ascii')
 		song.num_channels = cls.get_num_channels(songbytes)
