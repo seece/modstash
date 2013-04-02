@@ -13,6 +13,8 @@ schema = "ms"
 dburl = os.environ['DATABASE_URL']
 
 def connection():
+	"""Returns a database connection."""
+
 	try:
 		conn = psycopg2.connect(dburl)
 	except Exception as e:
@@ -22,6 +24,8 @@ def connection():
 	return conn
 
 def cursor(conn):
+	"""Returns the database cursor with the correct schema already set."""
+	
 	cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 	try:
 		cur.execute("SET search_path TO " + schema + ";")
@@ -36,9 +40,10 @@ def test_connection():
 	conn.close()
 	return True
 
-'''A decorator that provides a database connection and 
-a related cursor to the function'''
 def dbconnection(f):
+	"""A decorator that provides a database connection and 
+	a related cursor to the function."""
+
 	@wraps(f)
 	def connection_wrapper(*args, **kwargs):
 		conn = connection()

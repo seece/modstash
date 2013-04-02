@@ -1,11 +1,13 @@
 import os
 import string
 import re
+
 from unidecode import unidecode
 import psycopg2
 import database
 from database import dbconnection
 from lib.model.user import User
+from lib.model.instrument import Instrument
 
 class InvalidTrimmedNameException(Exception):
 	"""Thrown if a name look up fails."""
@@ -211,7 +213,28 @@ class Song:
 
 		conn.commit()
 
+		cls.add_instruments(song, songid)
+
 		cls.save_to_disk(songbytes, songpath)
+
+	@classmethod
+	def add_instruments(cls, song, songid):
+		"""Adds all (non-empty) instruments of the given song
+		to the sample database."""
+
+		for index, ins in enumerate(song.instruments):
+			if not ins.sample:
+				continue
+
+			if ins.sample.length == 0:
+				continue
+
+			Instrument.add_instrument(songid, ins, index)
+			
+
+
+
+
 
 
 
