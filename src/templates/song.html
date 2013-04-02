@@ -1,0 +1,13 @@
+﻿## -*- coding: utf-8 -*-
+## encoded in utf-8 with BOM
+<%inherit file="/base.html"/>
+
+<h2>${song['title']}</h2>
+<span>by ${owner}</span>
+<ul>
+<li>uploaded: ${song['upload_date']}</li>
+<li><a href="/download/${owner}/${song['original_url']}">${song['filename']}</a></li>
+</ul>
+
+<% authorstr = str(authors) %>
+<p>authors: ${authorstr}</p>

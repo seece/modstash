@@ -12,25 +12,53 @@ from mako.template import Template
 from mako.lookup import TemplateLookup
 from lib.flash import flash
 from lib.tool.restrict import restrict
-
+	
 cherrypy.tools.restrict = restrict
 
+class Songpage(Controller):
+	@cherrypy.expose
+	def view(self, who, songname):
+		try:
+			song = Song.get_by_trimmedname(who, songname)
+		except Exception as e:
+			print(str(e))
+			return self.render(error_view, 
+					error_message="Song not found :(")
+
+		authors = Song.get_authors(song['id'])
+		owner = None # the song owner has the song under his url
+
+		for a in authors:
+			if a['position'] == 0:
+				owner = a['username']
+				break
+
+		return self.render(song_view, song=song, authors=authors,
+				owner=owner)
+
 class Modstash(Controller):
+	"""The main controller object."""
+
 	def __init__(self):
 		login = Login()
+		songpage = Songpage()
 		self.login = login.login
 		self.logout = login.logout
+		self.songpage = songpage.view
 
 	@cherrypy.expose
 	def index(self):
 		return self.render(index_view)
 
 	@cherrypy.expose
-	def users(self, who=None):
+	def users(self, who=None, songname=None):
 		if not who:
 			# TODO add user listing here?
 			flash('Invalid user.', 'error')
 			return self.render(error_view)
+
+		if songname:
+			return self.songpage(who, songname)
 
 		person = User.get_user(who)
 
@@ -39,7 +67,8 @@ class Modstash(Controller):
 			return self.render(error_view, error_message=msg)
 
 		sanitized = User.sanitize_user(person)
-		return self.render(user_view, user=sanitized)
+		songs = User.get_user_songs(person["username"])
+		return self.render(user_view, user=sanitized, songs=songs)
 
 	#@cherrypy.expose
 	def adduser(self, name):

@@ -8,4 +8,16 @@
 		<li>joined: ${user['joined']}</li>
 		<li>last seen: ${user['last_logged']}</li>
 	</ul>
+	
+	% if songs:
+		<ul>
+		% for s in songs:
+			<li>
+			<a href="/users/${user['username']}/${s['nicename']}">${s['nicename']}</a>
+			</li>
+		% endfor
+		</ul>
+	% else:
+		No songs.
+	%endif
 </p>

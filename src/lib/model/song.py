@@ -5,6 +5,11 @@ from unidecode import unidecode
 import psycopg2
 import database
 from database import dbconnection
+from lib.model.user import User
+
+class InvalidTrimmedNameException(Exception):
+	"""Thrown if a name look up fails."""
+	pass
 
 class InvalidAuthorException(Exception):
 	pass
@@ -36,6 +41,61 @@ def get_song_path(songbytes, song, songfile, username):
 
 class Song:
 	@classmethod
+	@dbconnection
+	def get_authors(cls, songid, conn, cur):
+		query = "SELECT * from author \
+				WHERE songid=%s;"
+
+		try:
+			cur.execute(query,
+					(songid,))
+		except Exception as e:
+			raise
+
+		conn.commit()
+		return cur.fetchall()
+				
+	@classmethod
+	@dbconnection
+	def get_by_trimmedname(cls, username, trimmedname, conn, cur):
+		query = "SELECT songid FROM trimmedname \
+				WHERE nicename = %s \
+				AND songid in \
+					(SELECT songid FROM author \
+					WHERE username=%s);"
+
+		try:
+			cur.execute(query,
+					(trimmedname, username))
+		except Exception as e:
+			print("Can't find song id: " + str(e))
+			raise
+
+		conn.commit()
+		songid = cur.fetchone()['songid']
+
+		if not songid:
+			raise InvalidTrimmedNameException()
+
+		return cls.get_by_id(songid)
+
+
+	@classmethod
+	@dbconnection
+	def get_by_id(cls, songid, conn, cur):
+		query = "SELECT * FROM song WHERE id = %s;"
+		
+		try:
+			cur.execute(query,
+					(songid,))
+		except Exception as e:
+			print("Can't find song: " + str(e))
+			raise
+
+		conn.commit()
+		return cur.fetchone()
+
+	@classmethod
 	def save_to_disk(cls, songbytes, songpath):
 		f = open(songpath, 'wb')
 		f.write(songbytes)
@@ -54,7 +114,7 @@ class Song:
 
 	@classmethod
 	def filename_to_url(cls, filename, username):
-		return "/download/" + filename
+		return "" + filename
 
 	@classmethod
 	@dbconnection
@@ -63,22 +123,14 @@ class Song:
 		
 			The title is compared to the trimmed song names
 			of the user. """
-		query = 'SELECT songid, nicename FROM trimmedname \
-				WHERE songid IN \
-				(SELECT id FROM song WHERE \
-					song.id IN \
-					(SELECT id FROM author WHERE username=%s));'
 
-		cur.execute(query, (username,))
-		conn.commit()
-		result = cur.fetchall()
-
+		songs = User.get_user_songs(username)
 		finalname = title
 		
 		while True:
 			hit = False
-			for r in result:
-				if r['nicename'] == finalname:
+			for s in songs:
+				if s['nicename'] == finalname:
 					hit = True
 
 			if not hit:

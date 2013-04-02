@@ -108,6 +108,23 @@ class User:
 
 		return True
 
+	@classmethod
+	@dbconnection
+	def get_user_songs(cls, username, conn, cur):
+		"""Loads all user song names from the database.
+		Collaborations are loaded too. Does not load the actual
+		song data, only ids and trimmed names."""
+
+		query = 'SELECT songid, nicename FROM trimmedname \
+				WHERE songid IN \
+				(SELECT id FROM song WHERE \
+					song.id IN \
+					(SELECT id FROM author WHERE username=%s));'
+
+		cur.execute(query, (username,))
+		conn.commit()
+		result = cur.fetchall()
+		return result
 
 	@classmethod
 	@dbconnection
