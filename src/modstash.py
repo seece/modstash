@@ -140,7 +140,7 @@ class Login(Controller):
 
 		if cherrypy.session.get('username'):
 			flash("You have already logged in.")
-			return self.render(index_view)
+			raise cherrypy.HTTPRedirect(cherrypy.request.headers.get("Referer", "/") or "/")
 
 		valid = User.validate_credentials(username, password)
 
@@ -154,7 +154,7 @@ class Login(Controller):
 			raise cherrypy.HTTPRedirect(cherrypy.request.headers.get("Referer", "/") or "/")
 		else:
 			flash("Invalid credentials.", 'error')
-			return self.render(index_view)
+			raise cherrypy.HTTPRedirect(cherrypy.request.headers.get("Referer", "/") or "/")
 			
 	@cherrypy.expose
 	def logout(self):
