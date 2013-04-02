@@ -3,7 +3,14 @@
 <%inherit file="/base.html"/>
 
 <p>
-MODSTASH
-
-ÄÄKKÖSET
+welcome to modstäsh!
 </p>
+
+<ul>
+% for s in songs:
+	<% title = s['title'] %>
+	<% nicename = s['nicename'] %>
+	<% owner = s['authors'][0]['username'] %>
+	<li class=""><a href="/songs/${owner}/${nicename}">${title}</a></li> 
+% endfor
+</ul>

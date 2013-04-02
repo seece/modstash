@@ -69,7 +69,8 @@ class Modstash(Controller):
 
 	@cherrypy.expose
 	def index(self):
-		return self.render(index_view)
+		top = Song.get_newest(40)
+		return self.render(index_view, songs = top)
 
 	@cherrypy.expose
 	def songs(self, username, songname, **args):

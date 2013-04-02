@@ -20,7 +20,6 @@ class SampleHash:
 		if cur.rowcount == 0:
 			raise NoSuchHashException()
 
-		conn.commit() # FIXME is this necessary?  
 		return cur.fetchone()['sampleid']
 
 	@classmethod

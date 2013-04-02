@@ -48,8 +48,11 @@ class Song:
 	@classmethod
 	@dbconnection
 	def get_authors(cls, songid, conn, cur):
+		"""Returns a sorted list of song authors."""
+
 		query = "SELECT * from author \
-				WHERE songid=%s;"
+				WHERE songid=%s \
+				ORDER BY position ASC;"
 
 		try:
 			cur.execute(query,
@@ -59,6 +62,29 @@ class Song:
 
 		conn.commit()
 		return cur.fetchall()
+
+
+	@classmethod
+	@dbconnection
+	def get_newest(cls, amount, conn, cur):
+		query = "SELECT * FROM song \
+				ORDER BY upload_date DESC \
+				LIMIT %s;"
+
+		try:
+			cur.execute(query, (amount, ))
+		except Exception as e:
+			raise
+
+		result = cur.fetchall()
+
+		for r in result:
+			authors = cls.get_authors(r['id'])
+			r['nicename'] = cls.get_song_trimmed_name(r['id'])['nicename']
+			r['authors'] = authors
+
+		return result
+	
 				
 	@classmethod
 	@dbconnection
@@ -88,6 +114,16 @@ class Song:
 			raise InvalidTrimmedNameException()
 
 		return cls.get_by_id(songid)
+
+	@classmethod
+	@dbconnection
+	def get_song_trimmed_name(cls, songid, conn, cur):
+		query = "SELECT nicename FROM trimmedname \
+				WHERE songid=%s;"
+		
+		cur.execute(query, (songid,))
+		return cur.fetchone()
+
 
 	@classmethod
 	@dbconnection
