@@ -6,8 +6,19 @@
 <span>by ${owner}</span>
 <ul>
 <li>uploaded: ${song['upload_date']}</li>
-<li><a href="/download/${owner}/${song['original_url']}">${song['filename']}</a></li>
+<li><a href="/download/${song['original_url']}">${song['filename']}</a></li>
 </ul>
 
 <% authorstr = str(authors) %>
 <p>authors: ${authorstr}</p>
+
+% if logged_in:
+
+<h3>actions</h3>
+% if username == owner:
+<form action="./${nicename}?delete" method="post">
+	<input type="submit" value="Delete song">
+</form>
+% endif
+% endif
+

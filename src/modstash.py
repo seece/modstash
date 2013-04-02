@@ -16,14 +16,33 @@ from lib.tool.restrict import restrict
 cherrypy.tools.restrict = restrict
 
 class Songpage(Controller):
+	def __init__(self):
+		pass
+
+	def delete(username, songname):
+		if not cherrypy.session.get('username'):
+			raise cherrypy.HTTPError(401)
+
+		if cherrypy.request.method != 'POST':
+			raise cherrypy.HTTPError(404) 
+			
+		songid = Song.get_id_from_trimmedname(username, songname)
+		Song.delete_song(songid)
+		flash("Deleted '%s'" % (songname), 'success')
+		raise cherrypy.HTTPRedirect("/users/" + username)
+
 	@cherrypy.expose
-	def view(self, who, songname):
+	def index(self, username, songname, **args):
 		try:
-			song = Song.get_by_trimmedname(who, songname)
+			song = Song.get_by_trimmedname(username, songname)
 		except Exception as e:
 			print(str(e))
 			return self.render(error_view, 
 					error_message="Song not found :(")
+		
+		if 'delete'  in args:
+			return Songpage.delete(username, songname)
+			
 
 		authors = Song.get_authors(song['id'])
 		owner = None # the song owner has the song under his url
@@ -34,7 +53,7 @@ class Songpage(Controller):
 				break
 
 		return self.render(song_view, song=song, authors=authors,
-				owner=owner)
+				owner=owner, nicename=songname)
 
 class Modstash(Controller):
 	"""The main controller object."""
@@ -44,21 +63,24 @@ class Modstash(Controller):
 		songpage = Songpage()
 		self.login = login.login
 		self.logout = login.logout
-		self.songpage = songpage.view
+		#self.songpage = songpage.view
+		self.songpage = Songpage.index
+		#self.delete = songpage.delete
 
 	@cherrypy.expose
 	def index(self):
 		return self.render(index_view)
 
 	@cherrypy.expose
-	def users(self, who=None, songname=None):
+	def songs(self, username, songname, **args):
+		return self.songpage(self, username, songname, **args)
+
+	@cherrypy.expose
+	def users(self, who=None, **args):
 		if not who:
 			# TODO add user listing here?
 			flash('Invalid user.', 'error')
 			return self.render(error_view)
-
-		if songname:
-			return self.songpage(who, songname)
 
 		person = User.get_user(who)
 
@@ -85,7 +107,7 @@ class Modstash(Controller):
 		return self.render(upload_view)
 
 	@cherrypy.expose
-	@cherrypy.tools.restrict()
+	@cherrypy.tools.restrict(method='POST')
 	def upload(self, songfile):
 		username=cherrypy.session.get('username')
 
@@ -126,7 +148,9 @@ class Login(Controller):
 			cherrypy.session['username'] = username
 			cherrypy.session.save()
 			flash("Logged in successfully!", 'success')
-			return self.render(index_view)
+
+			# redirect user back to the page where login was entered
+			raise cherrypy.HTTPRedirect(cherrypy.request.headers.get("Referer", "/") or "/")
 		else:
 			flash("Invalid credentials.", 'error')
 			return self.render(index_view)
@@ -141,6 +165,7 @@ class Login(Controller):
 					
 		cherrypy.session.clear()
 		flash("Logged out successfully!", 'success')
-		return self.render(index_view)
+		forward_url = cherrypy.request.headers.get("Referer", "/")
+		raise cherrypy.HTTPRedirect(forward_url or "/")
 
 

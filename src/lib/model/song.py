@@ -41,6 +41,9 @@ def get_song_path(songbytes, song, songfile, username):
 
 	return (songpath, filename)
 
+def get_static_song_path(songpath):
+	return os.path.join(song_static_dir, songpath)
+
 class Song:
 	@classmethod
 	@dbconnection
@@ -59,7 +62,7 @@ class Song:
 				
 	@classmethod
 	@dbconnection
-	def get_by_trimmedname(cls, username, trimmedname, conn, cur):
+	def get_id_from_trimmedname(cls, username, trimmedname, conn, cur):
 		query = "SELECT songid FROM trimmedname \
 				WHERE nicename = %s \
 				AND songid in \
@@ -75,16 +78,21 @@ class Song:
 
 		conn.commit()
 		songid = cur.fetchone()['songid']
+		return songid
+
+	@classmethod
+	def get_by_trimmedname(cls, username, trimmedname):
+		songid = cls.get_id_from_trimmedname(username, trimmedname)
 
 		if not songid:
 			raise InvalidTrimmedNameException()
 
 		return cls.get_by_id(songid)
 
-
 	@classmethod
 	@dbconnection
 	def get_by_id(cls, songid, conn, cur):
+		"""Fetch a song with the given id from the DB."""
 		query = "SELECT * FROM song WHERE id = %s;"
 		
 		try:
@@ -107,16 +115,18 @@ class Song:
 	def trim_title(cls, title):
 		"""Trims the given song title to be used in an URL"""
 		trimmed = title.strip()
-		trimmed = re.sub(r'\s+', '_', trimmed) # reduce whitespace to a single underscore
+		trimmed = re.sub(r'\s+', '-', trimmed) 
 		trimmed = re.sub(r'_+', '_', trimmed)
-		trimmed = re.sub(r'\W', '', trimmed)
+		trimmed = re.sub(r'-+', '-', trimmed)
 		trimmed = unidecode(trimmed)
+		trimmed = re.sub(r'[^A-Za-z0-9_-]', '', trimmed)
 		trimmed = trimmed.lower()
 		return trimmed
 
 	@classmethod
 	def filename_to_url(cls, filename, username):
-		return "" + filename
+		"""Turns a song filename to a proper relative url."""
+		return username + "/" + filename
 
 	@classmethod
 	@dbconnection
@@ -230,7 +240,58 @@ class Song:
 				continue
 
 			Instrument.add_instrument(songid, ins, index)
-			
+
+	@classmethod
+	@dbconnection
+	def get_instruments(cls, songid, conn, cur):
+		"""Returns all instruments used in a song."""
+		query = "SELECT * FROM instrument \
+				WHERE songid = %s;"
+
+		try:
+			cur.execute(query, (songid,))
+		except Exception as e:
+			print("Can't get song instruments: " + str(e))
+			raise
+
+		conn.commit()
+		return cur.fetchall()
+
+	@classmethod
+	@dbconnection
+	def delete_song(cls, songid, conn, cur):
+		"""Deletes a song from the database."""
+
+		ins_query = "DELETE FROM instrument \
+				WHERE songid = %s;"
+		name_query = "DELETE FROM trimmedname \
+				WHERE songid = %s;"
+		# TODO add Influence deletion here too
+		author_query = "DELETE FROM author \
+				where songid = %s;"
+		song_query = "DELETE FROM song \
+				where id = %s;"
+
+		song = cls.get_by_id(songid)
+		songpath = song["original_url"]
+		
+		try:
+			cur.execute(ins_query, (songid,))
+			cur.execute(name_query, (songid,))
+			cur.execute(author_query, (songid,))
+			cur.execute(song_query, (songid,))
+		except Exception as e:
+			print("Can't delete song: " + str(e))
+			raise
+
+		conn.commit()
+
+		try:
+			filepath = get_static_song_path(songpath)
+			os.remove(filepath)
+		except Exception as e:
+			print("Can't remove song file: " + str(e))
+
 
 
 
