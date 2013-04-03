@@ -51,3 +51,16 @@ ul.menu {
 ul.menu li {
 	display: inline;
 }
+
+.monospace {
+	font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+}
+
+ul.samplelist {
+	font-size:0.8em;
+	list-style-type: none;
+}
+
+#flod_player {
+	border: 1px solid black;
+}

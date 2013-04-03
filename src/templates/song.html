@@ -2,15 +2,49 @@
 ## encoded in utf-8 with BOM
 <%inherit file="/base.html"/>
 
+<%block name="additional_head">
+	<script src="/static/js/flod_js_21/includes/Core.js"></script>
+	<script src="/static/js/flod_js_21/includes/Amiga.js"></script>
+	<script src="/static/js/flod_js_21/includes/PTPlayer.js"></script>
+	<script src="/static/js/flod_js_21/includes/MKPlayer.js"></script>
+	<script src="/static/js/flod_js_21/includes/S1Player.js"></script>
+</%block>
+
+<%
+	downloadurl = '/download/'+song['original_url']
+%>
+
 <h2>${song['title']}</h2>
 <span>by ${owner}</span>
 <ul>
 <li>uploaded: ${song['upload_date']}</li>
-<li><a href="/download/${song['original_url']}">${song['filename']}</a></li>
+<li><a href="${downloadurl}">${song['filename']}</a></li>
 </ul>
 
 <% authorstr = str(authors) %>
 <p>authors: ${authorstr}</p>
+
+<div id="flod_player" data-songpath="${downloadurl}">
+	<button type="button" id="play">Play</button>
+	<button type="button" id="pause" disabled>Pause</button>
+	<button type="button" id="stop" disabled>Stop</button>
+	<span id="tracker"></span>
+	<span id="playerstatus">not loaded</span><br>
+	<label> volume:  <input type="range" id="volume" min="0.0" max="1.0" step="0.1" value="1.0"/> </label>
+</div>
+
+% if instruments:
+<ul class="monospace samplelist">
+	% for ins in instruments:
+	<li>
+	<% insname = repr(ins) %>
+	${insname}
+	</li>
+	% endfor
+</ul>
+% else:
+<p>No instruments found.</p>
+% endif
 
 % if logged_in:
 
@@ -21,4 +55,74 @@
 </form>
 % endif
 % endif
+
+<script>
+window.addEventListener("DOMContentLoaded", function() {
+    var gid    = function(id) { return document.getElementById(id); },
+        play   = gid("play"),
+        pause  = gid("pause"),
+        stop   = gid("stop"),
+        volume = gid("volume"),
+		status = gid("playerstatus")
+        loader = window.neoart.FileLoader;
+        player = null;
+	
+    play.addEventListener("click", function(e) {
+		if (!player) {
+			status.innerHTML = "loading..."
+			var modurl = gid("flod_player").getAttribute('data-songpath')
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', modurl, true);
+			xhr.responseType = 'arraybuffer';
+			xhr.onload = function(e) {
+			  if(this.status == 200){
+				var uInt8Array = new Uint8Array(this.response);
+				player = loader.load(this.response);
+				player.loopSong=1;
+				player.play();
+				status.innerHTML = "play!"
+			  }else{
+				status.innerHTML = "error"
+			  }
+			};
+			xhr.send();
+		} else {
+			player.play();
+		}
+     
+      play.disabled  = true;
+      pause.disabled = false;
+      stop.disabled  = false;
+    });
+
+    pause.addEventListener("click", function(e) {
+      player.pause();
+      play.disabled  = false;
+      pause.disabled = true;
+    });
+
+    stop.addEventListener("click", function(e) {
+      player.stop();
+      completeHandler();
+    });
+
+	/*
+    next.addEventListener("click", function(e) {
+      if (++player.playSong > player.lastSong) player.playSong = 0;
+    });
+	*/
+
+    volume.addEventListener("change", function(e) {
+      player.volume = e.target.valueAsNumber;
+    });
+
+    function completeHandler() {
+      play.disabled  = false;
+      pause.disabled = true;
+      stop.disabled  = true;
+    }
+
+    document.addEventListener("flodStop", completeHandler);
+  });
+</script>
 

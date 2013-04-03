@@ -44,16 +44,12 @@ class Songpage(Controller):
 			return Songpage.delete(username, songname)
 			
 
+		instruments = Song.get_instruments(song['id'])
 		authors = Song.get_authors(song['id'])
-		owner = None # the song owner has the song under his url
-
-		for a in authors:
-			if a['position'] == 0:
-				owner = a['username']
-				break
+		owner = authors[0]['username'] # the song owner has the song under his url
 
 		return self.render(song_view, song=song, authors=authors,
-				owner=owner, nicename=songname)
+				owner=owner, nicename=songname, instruments=instruments)
 
 class Modstash(Controller):
 	"""The main controller object."""

@@ -54,11 +54,7 @@ class Song:
 				WHERE songid=%s \
 				ORDER BY position ASC;"
 
-		try:
-			cur.execute(query,
-					(songid,))
-		except Exception as e:
-			raise
+		cur.execute(query, (songid,))
 
 		conn.commit()
 		return cur.fetchall()
@@ -71,10 +67,7 @@ class Song:
 				ORDER BY upload_date DESC \
 				LIMIT %s;"
 
-		try:
-			cur.execute(query, (amount, ))
-		except Exception as e:
-			raise
+		cur.execute(query, (amount, ))
 
 		result = cur.fetchall()
 
@@ -282,7 +275,8 @@ class Song:
 	def get_instruments(cls, songid, conn, cur):
 		"""Returns all instruments used in a song."""
 		query = "SELECT * FROM instrument \
-				WHERE songid = %s;"
+				WHERE songid = %s \
+				ORDER BY index ASC;"
 
 		try:
 			cur.execute(query, (songid,))

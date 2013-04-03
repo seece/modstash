@@ -12,6 +12,7 @@
 		%endif
 		
 		<link rel="stylesheet" href="${config["stylepath"]}" />
+		<script src="/static/js/jquery-1.9.1.min.js"></script>
 	</%block>
 	<%block name="additional_head">
 	</%block>
@@ -34,9 +35,9 @@
 			${self.body()}
 		</div>
 		<%block name="footer">
-			<div class="footer">
+			<footer class="footer">
 				the footer
-			</div>
+			</footer>
 		</%block>
 	</div>
 </body>
