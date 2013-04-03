@@ -41,7 +41,8 @@
 	<li>
 		<a href="/sample/${ins['sampleid']}" class="no_link_hilight samplelink">
 		<% insname = ins['name'] %>
-		${ins['index']}. ${insname | h}
+		<% songcount = ins['songcount'] %>
+		${ins['index']}. ${insname | h} <span class="reference_count">(${songcount})</span>
 		</a>
 	</li>
 	

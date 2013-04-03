@@ -72,6 +72,10 @@ ul.samplelist {
 	background-color:#aa8;
 }
 
+span.reference_count {
+	background-color:#dcc;
+}
+
 #flod_player {
 	border: 1px solid black;
 }

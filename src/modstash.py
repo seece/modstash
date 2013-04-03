@@ -48,6 +48,12 @@ class Songpage(Controller):
 		authors = Song.get_authors(song['id'])
 		owner = authors[0]['username'] # the song owner has the song under his url
 
+		# count the amount of references each instrument has
+		# TODO use SQL to make this faster
+		for ins in instruments:
+			songs = Sample.get_sample_songs(ins['sampleid'])
+			ins['songcount'] = len(songs)
+
 		return self.render(song_view, song=song, authors=authors,
 				owner=owner, nicename=songname, instruments=instruments)
 
@@ -150,12 +156,14 @@ class Modstash(Controller):
 			User.add_user(username=username, password=password, email=email)
 		except UserDetailException as e:
 			flash(str(e), 'error')
+			return self.render(register_view)
 		except UserAlreadyExistsException as e:
 			flash("User already exists with that name.", 'error')
-		except Exception as e:
 			return self.render(register_view)
+		else:
+			flash("Account created successfully! You can now log in.", 'success')
+			raise cherrypy.HTTPRedirect('/')
 
-		flash("Account created successfully! You can now log in.", 'success')
-		raise cherrypy.HTTPRedirect('/')
+
 		
 
