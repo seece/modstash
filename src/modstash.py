@@ -26,7 +26,7 @@ class Songpage(Controller):
 		if cherrypy.request.method != 'POST':
 			raise cherrypy.HTTPError(404) 
 			
-		songid = Song.get_id_from_trimmedname(username, songname)
+		songid = Song.get_user_song(username, songname)
 		Song.delete_song(songid)
 		flash("Deleted '%s'" % (songname), 'success')
 		raise cherrypy.HTTPRedirect("/users/" + username)
@@ -40,9 +40,8 @@ class Songpage(Controller):
 			return self.render(error_view, 
 					error_message="Song not found :(")
 		
-		if 'delete'  in args:
+		if 'delete' in args:
 			return Songpage.delete(username, songname)
-			
 
 		instruments = Song.get_instruments(song['id'])
 		authors = Song.get_authors(song['id'])

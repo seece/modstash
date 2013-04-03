@@ -129,7 +129,7 @@ class User:
 				WHERE songid IN \
 				(SELECT id FROM song WHERE \
 					song.id IN \
-					(SELECT id FROM author WHERE username=%s));'
+					(SELECT songid FROM author WHERE username=%s));'
 
 		cur.execute(query, (username,))
 		conn.commit()

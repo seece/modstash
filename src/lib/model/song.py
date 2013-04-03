@@ -77,11 +77,28 @@ class Song:
 			r['authors'] = authors
 
 		return result
+
+	@classmethod
+	@dbconnection 
+	def get_id_by_trimmedname(cls, trimmedname, conn, cur):
+		query = "SELECT songid FROM trimmedname \
+				WHERE nicename = %s;"
+		try:
+			cur.execute(query, (trimmedname, ))
+		except Exception as e:
+			print("Can't find song id: " + str(e))
+
+		result = cur.fetchone()
+
+		if not result:
+			return None
+
+		return result['songid'] 
 	
 				
 	@classmethod
 	@dbconnection
-	def get_id_from_trimmedname(cls, username, trimmedname, conn, cur):
+	def get_user_song(cls, username, trimmedname, conn, cur):
 		query = "SELECT songid FROM trimmedname \
 				WHERE nicename = %s \
 				AND songid in \
@@ -95,13 +112,12 @@ class Song:
 			print("Can't find song id: " + str(e))
 			raise
 
-		conn.commit()
 		songid = cur.fetchone()['songid']
 		return songid
 
 	@classmethod
 	def get_by_trimmedname(cls, username, trimmedname):
-		songid = cls.get_id_from_trimmedname(username, trimmedname)
+		songid = cls.get_user_song(username, trimmedname)
 
 		if not songid:
 			raise InvalidTrimmedNameException()
@@ -183,6 +199,24 @@ class Song:
 
 	@classmethod
 	@dbconnection
+	def finalize_trimmedname(cls, title, username, conn, cur):
+		finalname = title
+		
+		while True:
+			hit = False
+			if cls.get_id_by_trimmedname(finalname):
+				hit = True
+
+			if not hit:
+				break
+
+			finalname += '_'
+
+		return finalname
+
+
+	@classmethod
+	@dbconnection
 	def add_song(cls, song, songbytes, songfile, authors, conn, cur):
 		"""Adds a new song to the DB and saves the file to disk.
 			
@@ -242,7 +276,8 @@ class Song:
 			raise
 
 		nicename = cls.trim_title(title) or songfile.filename
-		nicename = cls.finalize_title(nicename, username)
+		#nicename = cls.finalize_title(nicename, username)
+		nicename = cls.finalize_trimmedname(nicename, username)
 
 		try:
 			cur.execute(namequery, (songid, nicename))
