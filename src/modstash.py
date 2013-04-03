@@ -131,7 +131,9 @@ class Modstash(Controller):
 
 		Song.add_song(song, songbytes, songfile, [username,])
 
-		return out % (len(songbytes), songfile.filename, songfile.content_type, song.name)
+		flash("Song '%s' (%s) uploaded successfully." % (song.name, songfile.filename), 'success')
+		raise cherrypy.HTTPRedirect("/users/%s" % (username, ))
+		#return out % (len(songbytes), songfile.filename, songfile.content_type, song.name)
 
 	@cherrypy.expose
 	def register(self, username=None, password=None, password2=None, email=None):

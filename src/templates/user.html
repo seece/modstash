@@ -5,8 +5,8 @@
 <section>
 	<h1>${user['username']}</h1>
 	<ul>
-		<li>joined: ${user['joined']}</li>
-		<li>last seen: ${user['last_logged']}</li>
+		<li>joined: ${user['joined'].strftime('%Y-%m-%d')}</li>
+		<li>last seen: ${user['last_logged'].strftime(config['dateformat'])}</li>
 	</ul>
 	
 	<section>

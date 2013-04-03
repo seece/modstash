@@ -8,6 +8,7 @@ import database
 from database import dbconnection
 from lib.model.user import User
 from lib.model.instrument import Instrument
+import lib.model.trimmedname as TrimmedName
 
 class InvalidTrimmedNameException(Exception):
 	"""Thrown if a name look up fails."""
@@ -59,7 +60,6 @@ class Song:
 		conn.commit()
 		return cur.fetchall()
 
-
 	@classmethod
 	@dbconnection
 	def get_newest(cls, amount, conn, cur):
@@ -73,7 +73,7 @@ class Song:
 
 		for r in result:
 			authors = cls.get_authors(r['id'])
-			r['nicename'] = cls.get_song_trimmed_name(r['id'])['nicename']
+			r['nicename'] = TrimmedName.get_song_name(r['id'])['nicename']
 			r['authors'] = authors
 
 		return result
@@ -121,16 +121,6 @@ class Song:
 			raise InvalidTrimmedNameException()
 
 		return cls.get_by_id(songid)
-
-	@classmethod
-	@dbconnection
-	def get_song_trimmed_name(cls, songid, conn, cur):
-		query = "SELECT nicename FROM trimmedname \
-				WHERE songid=%s;"
-		
-		cur.execute(query, (songid,))
-		return cur.fetchone()
-
 
 	@classmethod
 	@dbconnection

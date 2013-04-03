@@ -18,12 +18,9 @@
 <h2>${song['title'] | h}</h2>
 <span>uploaded by <a href="/users/${owner | h}"> ${owner | h}</a></span>
 <ul>
-<li>uploaded: ${song['upload_date'] | h}</li>
+<li>uploaded: ${song['upload_date'].strftime(config['dateformat']) | h}</li>
 <li><a href="${downloadurl}">${song['filename']}</a></li>
 </ul>
-
-<% authorstr = str(authors) %>
-<p>authors: ${authorstr}</p>
 
 <div id="flod_player" data-songpath="${downloadurl}">
 	<button type="button" id="play">Play</button>

@@ -1,4 +1,6 @@
 from database import dbconnection
+from lib.model.user import User
+import lib.model.trimmedname as TrimmedName
 
 class Sample:
 	"""The Sample model."""
@@ -25,9 +27,10 @@ class Sample:
 	@dbconnection
 	def get_sample_songs(cls, sampleid, conn, cur):
 		"""Fetches all songs that use this sample.
-		Sorted newest first."""
+		Sorted newest first. Also adds in the 'nicename'
+		field."""
 
-		query = "SELECT * FROM song WHERE \
+		query = "SELECT DISTINCT * FROM song WHERE \
 				song.id in \
 					(SELECT songid FROM instrument \
 					WHERE sampleid = %s) \
@@ -39,7 +42,13 @@ class Sample:
 			print("Can't find sample songs: %s" % (str(e)))
 			raise
 
-		return cur.fetchall()
+		result = cur.fetchall()
+		for r in result:
+			name = TrimmedName.get_song_name(r['id'])
+			r['nicename'] = name['nicename']
+			r['owner'] = name['owner']
+
+		return result
 
 	@classmethod
 	@dbconnection

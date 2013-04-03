@@ -9,7 +9,8 @@ class View():
 	template_lookup = TemplateLookup(directories=['templates'])
 
 	public_config = {'title': 'modstash', 
-			'stylepath' : '/static/css/style.css'}
+			'stylepath' : '/static/css/style.css',
+			'dateformat' : '%Y.%m.%d %H:%M' }
 
 	'''Initializes a new View from the given template path'''
 	def __init__(self, path):

@@ -8,12 +8,15 @@
 <% samplename_r = str(samplename) %>
 <h1>Sample: ${sampleid} '${samplename_r | h}'</h1>
 
+<section>
+<h1>Used in the following songs</h1>
 <ul>
 % for s in songs:
 	<% songr = repr(s) %>
-	<li>${s | h}</li>
+	<li><a href="/songs/${s['owner']}/${s['nicename']}"> ${s['title'] | h} (${s['filename'] | h}) </a></li>
 % endfor
 </ul>
+</section>
 
 % else:
 <h1>Sample</h1>
