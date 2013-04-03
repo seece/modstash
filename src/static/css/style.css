@@ -57,7 +57,7 @@ ul.menu li {
 	font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
 }
 
-ul.samplelist {
+.samplelist {
 	font-size:0.8em;
 	list-style-type: none;
 }
@@ -74,6 +74,10 @@ ul.samplelist {
 
 span.reference_count {
 	background-color:#dcc;
+	padding-left:3px;
+	padding-right:3px;
+	position:absolute;
+	left:2em;
 }
 
 #flod_player {

@@ -309,7 +309,8 @@ class Song:
 					FROM ins, song WHERE song.id in \
 						(SELECT songid FROM instrument \
 						WHERE sampleid = ins.sampleid) \
-					GROUP BY sampleid, songid, index, name;"
+					GROUP BY sampleid, songid, index, name \
+					ORDER BY ins.index ASC;"
 
 		try:
 			cur.execute(query, (songid,))

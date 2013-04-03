@@ -42,7 +42,11 @@
 		<a href="/sample/${ins['sampleid']}" class="no_link_hilight samplelink">
 		<% insname = ins['name'] %>
 		<% refcount = ins['refcount'] %>
-		${ins['index']}. ${insname | h} <span class="reference_count">(${refcount})</span>
+		<% refhtml = '' %>
+		<% if refcount > 1:
+			refhtml = '<span class="reference_count">' + str(refcount) + '</span>'
+		%>
+		 ${refhtml} ${ins['index']}. ${insname | h}
 		</a>
 	</li>
 	
