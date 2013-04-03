@@ -1,3 +1,4 @@
+import re
 import string
 import hashlib
 import random
@@ -58,12 +59,14 @@ class User:
 		if "@" in address:
 			return True
 
-		return False
+		raise UserDetailException("Invalid email address.")
 
 	@classmethod
 	def validate_password(cls, password):
-		if len(password) < 2:
-			return False
+		if len(password) > 512:
+			raise UserDetailException("Password too long (max 512 characters).")
+		if len(password) == 0:
+			raise UserDetailException("Blank password is not allowed.")
 		return True
 
 	"""Generates a randomized alphanumeric string of given length"""
@@ -100,8 +103,15 @@ class User:
 	@classmethod
 	def validate_username(cls, username):
 		"""Checks if a given username is free and valid"""
-		if len(username) < 3:
-			return False
+		if not username:
+			raise UserDetailException("Blank username is not allowed.")
+
+		if len(username) < 3 or len(username) > 32:
+			raise UserDetailException("Invalid username. (Must be between 3-32 characters)")
+
+		valid = re.match(r'^[\w_-]+$', username) is not None
+		if not valid:
+			raise UserDetailException("Username may contain only alphanumeric characters plus _ and -")
 
 		if cls.get_user(username) != None:
 			raise UserAlreadyExistsException()
@@ -140,27 +150,22 @@ class User:
 		conn.commit()
 
 	@classmethod
-	def add_user(cls, details):
+	def add_user(cls, **args):
 		required = ["username", "password", "email"]
 
 		for r in required:
-			if not r in details:
-				raise UserDetailException(r)
+			if not r in args:
+				raise UserDetailException("A required field is missing: %s" % r)
 
-		if not cls.validate_username(details["username"]):
-			raise UserDetailException("Invalid username.")
-
-		if not cls.validate_email(details["email"]):
-			raise UserDetailException("Invalid email address.")
-
-		if not cls.validate_password(details["password"]):
-			raise UserDetailException("That's an awful password.")
+		cls.validate_username(args["username"])
+		cls.validate_email(args["email"])
+		cls.validate_password(args["password"])
 
 		conn = database.connection()
 		cur = database.cursor(conn)
 		
-		pwhash = cls.generate_hash(details["password"])
-		screen_name = details["username"]
+		pwhash = cls.generate_hash(args["password"])
+		screen_name = args["username"]
 
 		query = "INSERT INTO Member \
 				(username, screen_name, password_hash, hash_salt, email) \
@@ -168,8 +173,8 @@ class User:
 
 		try:
 			cur.execute(query, 
-					(details["username"], screen_name, 
-					pwhash[0], pwhash[1], details["email"]))
+					(args["username"], screen_name, 
+					pwhash[0], pwhash[1], args["email"]))
 		except Exception as e:
 			print("Can't insert user: " + str(e))
 			raise

@@ -1,0 +1,28 @@
+﻿## -*- coding: utf-8 -*-
+## encoded in utf-8 with BOM
+<%inherit file="/base.html"/>
+
+<p>
+% if logged_in:
+	<p>Seems like you already have an account?</p>
+% else:
+	<section>
+	<h1>Create account</h1>
+	<form action="/register" method="post">
+		<label for="username">Username: </label> <br>
+		<input id="username" type="text" name="username">
+		<br>
+		<label for="email">Email: </label> <br>
+		<input id="email" type="text" name="email">
+		<br>
+		<label for="password">Password: </label><br>
+		<input id="password" type="password" name="password">
+		<br>
+		<label for="password2">Password again: </label><br>
+		<input id="password2" type="password" name="password2">
+		<br>
+		<input type="submit" value="Submit">
+	</form>
+	</section>
+% endif
+</p>
