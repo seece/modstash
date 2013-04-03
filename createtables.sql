@@ -38,7 +38,9 @@ CREATE TABLE ms.Author (
 
 CREATE TABLE ms.TrimmedName (
     songid          integer references ms.Song(id) NOT NULL,
-    nicename        varchar PRIMARY KEY
+    nicename        varchar NOT NULL,
+	owner			varchar NOT NULL,
+	PRIMARY KEY(nicename, owner)
 );
 
 -- either destination_id or external_url should be NULL

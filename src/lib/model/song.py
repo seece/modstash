@@ -80,11 +80,11 @@ class Song:
 
 	@classmethod
 	@dbconnection 
-	def get_id_by_trimmedname(cls, trimmedname, conn, cur):
+	def get_id_by_trimmedname(cls, username, trimmedname, conn, cur):
 		query = "SELECT songid FROM trimmedname \
-				WHERE nicename = %s;"
+				WHERE nicename = %s AND owner = %s;"
 		try:
-			cur.execute(query, (trimmedname, ))
+			cur.execute(query, (trimmedname, username))
 		except Exception as e:
 			print("Can't find song id: " + str(e))
 
@@ -101,9 +101,7 @@ class Song:
 	def get_user_song(cls, username, trimmedname, conn, cur):
 		query = "SELECT songid FROM trimmedname \
 				WHERE nicename = %s \
-				AND songid in \
-					(SELECT songid FROM author \
-					WHERE username=%s);"
+				AND owner = %s;" 
 
 		try:
 			cur.execute(query,
@@ -204,7 +202,7 @@ class Song:
 		
 		while True:
 			hit = False
-			if cls.get_id_by_trimmedname(finalname):
+			if cls.get_id_by_trimmedname(username, finalname):
 				hit = True
 
 			if not hit:
@@ -251,8 +249,8 @@ class Song:
 				RETURNING id;"
 		authorquery = "INSERT INTO author (songid, username, position, shown_name) \
 				VALUES (%s, %s, %s, %s);"
-		namequery = "INSERT INTO trimmedname (songid, nicename) \
-				VALUES (%s, %s);"
+		namequery = "INSERT INTO trimmedname (songid, nicename, owner) \
+				VALUES (%s, %s, %s);"
 		
 		try:
 			cur.execute(songquery,
@@ -280,7 +278,7 @@ class Song:
 		nicename = cls.finalize_trimmedname(nicename, username)
 
 		try:
-			cur.execute(namequery, (songid, nicename))
+			cur.execute(namequery, (songid, nicename, username))
 		except Exception as e:
 			print("Can't insert trimmed name: " + str(e))
 			raise
