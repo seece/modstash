@@ -6,9 +6,9 @@
 	<%block name="head">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		% if subtitle:
-			<title>${config["subtitle"]} | ${config["title"]}</title>
+			<title>${config["subtitle"] | h} | ${config["title"] | h}</title>
 		% else:
-			<title>${config["title"]}</title>
+			<title>${config["title"] | h}</title>
 		%endif
 		
 		<link rel="stylesheet" href="${config["stylepath"]}" />
@@ -27,7 +27,7 @@
 			% for f in flash:
 				<% msg = f.to_mako() %>
 				<% fclass = f.message_type  %>
-				<li class="flash ${fclass}">${msg}</li> 
+				<li class="flash ${fclass}">${msg | h}</li> 
 			% endfor
 		% endif
 		</ul>

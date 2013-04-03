@@ -5,6 +5,7 @@ import cherrypy
 from lib.modtag.modtag import load_module
 from lib.model.user import User, UserDetailException, UserAlreadyExistsException
 from lib.model.song import Song
+from lib.model.sample import Sample
 from view import *
 from controller import Controller
 from login import Login
@@ -96,6 +97,12 @@ class Modstash(Controller):
 		details["email"] = "e@mail.com" 
 		print("trying to add ", name)
 		return "jea: " + str(User.add_user(details))
+
+	@cherrypy.expose
+	def sample(self, sampleid):
+		songs = Sample.get_sample_songs(sampleid)
+		name = Sample.get_name(sampleid)
+		return self.render(sample_view, songs=songs, sampleid=sampleid, samplename=name)
 
 	@cherrypy.expose
 	@cherrypy.tools.restrict()

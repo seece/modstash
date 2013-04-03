@@ -61,6 +61,16 @@ ul.samplelist {
 	list-style-type: none;
 }
 
+.samplelink {
+	display:block;
+	min-width:100px;
+	max-width:300px;
+}
+
+.samplelink:hover {
+	background-color:#aa8;
+}
+
 #flod_player {
 	border: 1px solid black;
 }

@@ -39,11 +39,15 @@
 <section>
 <h1>Instruments</h1>
 <ul class="monospace samplelist">
-	% for ins in instruments:
+	% for ind, ins in enumerate(instruments):
+
 	<li>
-	<% insname = repr(ins) %>
-	${insname | h}
+		<a href="/sample/${ins['sampleid']}" class="no_link_hilight samplelink">
+		<% insname = ins['name'] %>
+		${ins['index']}. ${insname | h}
+		</a>
 	</li>
+	
 	% endfor
 </ul>
 </section>

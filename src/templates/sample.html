@@ -1,0 +1,16 @@
+﻿## -*- coding: utf-8 -*-
+## encoded in utf-8 with BOM
+<%inherit file="/base.html"/>
+
+<section>
+
+% if songs:
+<% samplename_r = str(samplename) %>
+<h1>Sample: ${sampleid} '${samplename_r | h}'</h1>
+<% songr = repr(songs) %>
+${songr}
+% else:
+<h1>Sample</h1>
+<p>Can't find songs using this sample.</p>
+%endif
+</section>
