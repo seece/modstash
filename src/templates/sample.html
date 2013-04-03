@@ -7,8 +7,14 @@
 % if songs:
 <% samplename_r = str(samplename) %>
 <h1>Sample: ${sampleid} '${samplename_r | h}'</h1>
-<% songr = repr(songs) %>
-${songr}
+
+<ul>
+% for s in songs:
+	<% songr = repr(s) %>
+	<li>${s | h}</li>
+% endfor
+</ul>
+
 % else:
 <h1>Sample</h1>
 <p>Can't find songs using this sample.</p>
