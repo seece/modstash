@@ -48,6 +48,7 @@ Song on yksi järjestelmään ladattu kappale. Kappaleeseen liittyy yksi tai use
 |attribuutti	| arvojoukko 	| kuvailu
 |---------------|---------------|----------|
 | nicename		| varchar		| jonkin kappaleen siistitty nimi
+| owner			| varchar		| kappaleen omistajan käyttäjänimi
 
 Taulukko kappaleiden siistityille nimille, joita käytetään tunnisteena kappaleen URL:ssä. Tämä on käyttäjälle selkeämpää kuin pelkän numeromuotoisen tunnisteen näyttäminen. 
 

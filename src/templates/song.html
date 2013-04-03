@@ -16,7 +16,7 @@
 %>
 
 <h2>${song['title'] | h}</h2>
-<span>by <a href="/users/${owner | h}"> ${owner | h}</a></span>
+<span>uploaded by <a href="/users/${owner | h}"> ${owner | h}</a></span>
 <ul>
 <li>uploaded: ${song['upload_date'] | h}</li>
 <li><a href="${downloadurl}">${song['filename']}</a></li>
