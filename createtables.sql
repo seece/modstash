@@ -22,7 +22,7 @@ CREATE TABLE ms.Song (
     title           varchar NOT NULL,
     upload_date     timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
     downloads       integer NOT NULL DEFAULT 0,
-	filename		varchar NOT NULL,
+    filename        varchar NOT NULL,
     original_url    varchar NOT NULL,
     render_url      varchar
 );
@@ -39,8 +39,8 @@ CREATE TABLE ms.Author (
 CREATE TABLE ms.TrimmedName (
     songid          integer references ms.Song(id) NOT NULL,
     nicename        varchar NOT NULL,
-	owner			varchar NOT NULL,
-	PRIMARY KEY(nicename, owner)
+    owner           varchar NOT NULL,
+    PRIMARY KEY(nicename, owner)
 );
 
 -- either destination_id or external_url should be NULL
