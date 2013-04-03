@@ -16,7 +16,7 @@
 %>
 
 <h2>${song['title'] | h}</h2>
-<span>by ${owner | h}</span>
+<span>by <a href="/users/${owner | h}"> ${owner | h}</a></span>
 <ul>
 <li>uploaded: ${song['upload_date'] | h}</li>
 <li><a href="${downloadurl}">${song['filename']}</a></li>
@@ -36,6 +36,8 @@
 </div>
 
 % if instruments:
+<section>
+<h1>Instruments</h1>
 <ul class="monospace samplelist">
 	% for ins in instruments:
 	<li>
@@ -44,14 +46,14 @@
 	</li>
 	% endfor
 </ul>
+</section>
 % else:
 <p>No instruments found.</p>
 % endif
 
 % if logged_in:
-
-<h3>actions</h3>
 % if username == owner:
+<h3>actions</h3>
 <form action="./${nicename}?delete" method="post">
 	<input type="submit" value="Delete song">
 </form>

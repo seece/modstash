@@ -2,13 +2,15 @@
 ## encoded in utf-8 with BOM
 <%inherit file="/base.html"/>
 
-<p>
-	<h2>${user['username']}</h2>
+<section>
+	<h1>${user['username']}</h1>
 	<ul>
 		<li>joined: ${user['joined']}</li>
 		<li>last seen: ${user['last_logged']}</li>
 	</ul>
 	
+	<section>
+	<h1>Songs</h1>
 	% if songs:
 		<ul>
 		% for s in songs:
@@ -20,4 +22,5 @@
 	% else:
 		No songs.
 	%endif
-</p>
+	</section>
+</section>
