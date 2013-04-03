@@ -44,15 +44,9 @@ class Songpage(Controller):
 		if 'delete' in args:
 			return Songpage.delete(username, songname)
 
-		instruments = Song.get_instruments(song['id'])
+		instruments = Song.get_instruments(song['id'], refcount=True)
 		authors = Song.get_authors(song['id'])
 		owner = authors[0]['username'] # the song owner has the song under his url
-
-		# count the amount of references each instrument has
-		# TODO use SQL to make this faster
-		for ins in instruments:
-			songs = Sample.get_sample_songs(ins['sampleid'])
-			ins['songcount'] = len(songs)
 
 		return self.render(song_view, song=song, authors=authors,
 				owner=owner, nicename=songname, instruments=instruments)

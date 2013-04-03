@@ -295,11 +295,21 @@ class Song:
 
 	@classmethod
 	@dbconnection
-	def get_instruments(cls, songid, conn, cur):
-		"""Returns all instruments used in a song."""
+	def get_instruments(cls, songid, conn, cur, refcount=False):
+		"""Returns all instruments used in a song. 
+		Calculates also a refcount-column if enabled."""
+
 		query = "SELECT * FROM instrument \
 				WHERE songid = %s \
 				ORDER BY index ASC;"
+
+		if refcount:
+			query = " WITH ins AS (SELECT * FROM instrument WHERE songid=%s) \
+					SELECT ins.sampleid, ins.songid, ins.index, ins.name, COUNT(song.id) as refcount \
+					FROM ins, song WHERE song.id in \
+						(SELECT songid FROM instrument \
+						WHERE sampleid = ins.sampleid) \
+					GROUP BY sampleid, songid, index, name;"
 
 		try:
 			cur.execute(query, (songid,))
