@@ -2,6 +2,15 @@
 	background-color:#eee;
 }
 
+#main {
+	min-width:200px;
+	max-width:1000px;
+	margin-left:auto;
+	margin-right:auto;
+	background-color:#fff;
+	padding:5px;
+}
+
 #flashmessages {
 	
 }
@@ -58,8 +67,9 @@ ul.menu li {
 }
 
 .samplelist {
-	font-size:0.8em;
+	font-size:0.9em;
 	list-style-type: none;
+	position:relative;
 }
 
 .samplelink {
@@ -77,7 +87,7 @@ span.reference_count {
 	padding-left:3px;
 	padding-right:3px;
 	position:absolute;
-	left:2em;
+	left:1em;
 }
 
 #flod_player {
