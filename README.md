@@ -8,7 +8,7 @@ You can set up the PostgreSQL database with psql using the SQL from `createtable
 
 You also need to setup the environment configuration by creating an `environment.conf` file to the `src/` directory. See `environment.conf.sample` for details.
 
-It's also possible to overwrite the database settings by editing the src/.env file.
+It's also possible to overwrite the database settings by editing the `src/.env` file.
 
 ## Tests
 
