@@ -2,15 +2,20 @@
 ## encoded in utf-8 with BOM
 <%inherit file="/base.html"/>
 
+% if not logged_in:
 <p>
-welcome to modstäsh!
+Welcome to <span class="bold">modstash</span>, the number one Amiga module dependency tracker community music site! If you want to upload songs, you should <a href="/register">register</a> first.
 </p>
+% endif
 
-<ul>
-% for s in songs:
-	<% title = s['title'] %>
-	<% nicename = s['nicename'] %>
-	<% owner = s['authors'][0]['username'] %>
-	<li class=""><a href="/songs/${owner}/${nicename}">${title}</a></li> 
-% endfor
-</ul>
+<section>
+	<h1>Latest songs</h1>
+	<ul>
+	% for s in songs:
+		<% title = s['title'] %>
+		<% nicename = s['nicename'] %>
+		<% owner = s['authors'][0]['username'] %>
+		<li class=""><a href="/songs/${owner}/${nicename}">${title}</a></li> 
+	% endfor
+	</ul>
+</section>

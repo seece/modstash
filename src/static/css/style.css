@@ -143,6 +143,11 @@ span.reference_count {
 	color:#889;
 }
 
+.bold {
+	font-weight:bold;
+}
+
+
 #flod_player {
 	border: 1px solid black;
 	width:250px;
