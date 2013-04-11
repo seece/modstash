@@ -16,6 +16,7 @@ if 'PORT' in os.environ:
 
 if 'ADDR' in os.environ:
 	address = os.environ['ADDR']
+	print("ADDR: " + str(address))
 
 def start():
 	globaldict = {
@@ -24,14 +25,15 @@ def start():
 		'tools.staticdir.root': os.path.dirname(os.path.abspath(__file__)),
 		'tools.encode.on' : True,
 		'tools.encode.encoding': 'utf8',
-		'request.error_response': handle_error
+		'request.error_response': handle_error,
+		'engine.autoreload_on' : True,
 	}
 
 	confdict =  {
 	}
 
-	cherrypy.config.update(globaldict)
 	cherrypy.config.update("environment.conf")
+	cherrypy.config.update(globaldict)
 
 	app = cherrypy.tree.mount(Modstash(), '/', "modstash.conf")
 	app.merge(confdict)
