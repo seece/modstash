@@ -16,6 +16,7 @@
 %>
 
 <h2>${song['title'] | h}</h2>
+<section>
 <span>uploaded by <a href="/users/${owner | h}"> ${owner | h}</a></span>
 <ul>
 <li>uploaded: ${song['upload_date'].strftime(config['dateformat']) | h}</li>
@@ -59,14 +60,17 @@
 <p>No instruments found.</p>
 % endif
 
+<section>
 % if logged_in:
 % if username == owner:
-<h3>actions</h3>
+<h1>Actions</h1>
 <form action="./${nicename}?delete" method="post">
 	<input type="submit" value="Delete song">
 </form>
 % endif
 % endif
+</section>
+</section>
 
 <script>
 window.addEventListener("DOMContentLoaded", function() {

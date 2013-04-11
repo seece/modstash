@@ -16,6 +16,10 @@ from lib.tool.restrict import restrict
 	
 cherrypy.tools.restrict = restrict
 
+def handle_error():
+	cherrypy.response.status = 500
+	cherrypy.response.body = "<p>Internal error occured! We are terribly sorry :(</p>"
+
 class Songpage(Controller):
 	def __init__(self):
 		pass

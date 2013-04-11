@@ -45,9 +45,6 @@ class User:
 
 		newhash = cls.hash_password(password, user["hash_salt"])
 
-		print("OLD: ", user["password_hash"])
-		print("NEW: ", newhash)
-
 		if newhash != user["password_hash"]:
 			return False
 

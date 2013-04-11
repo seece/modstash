@@ -24,12 +24,14 @@ def start():
 		'tools.staticdir.root': os.path.dirname(os.path.abspath(__file__)),
 		'tools.encode.on' : True,
 		'tools.encode.encoding': 'utf8',
+		'request.error_response': handle_error
 	}
 
 	confdict =  {
 	}
 
 	cherrypy.config.update(globaldict)
+	cherrypy.config.update("environment.conf")
 
 	app = cherrypy.tree.mount(Modstash(), '/', "modstash.conf")
 	app.merge(confdict)

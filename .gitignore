@@ -4,3 +4,4 @@
 *.pyc
 
 run.bat
+environment.conf
