@@ -19,8 +19,8 @@
 <section>
 <span>uploaded by <a href="/users/${owner | h}"> ${owner | h}</a></span>
 <ul>
-<li>uploaded: ${song['upload_date'].strftime(config['dateformat']) | h}</li>
-<li><a href="${downloadurl}">${song['filename']}</a></li>
+<li>upload date: ${song['upload_date'].strftime(config['dateformat']) | h}</li>
+<li>download: <a href="${downloadurl}">${song['filename']}</a></li>
 </ul>
 
 <div id="flod_player" data-songpath="${downloadurl}">
