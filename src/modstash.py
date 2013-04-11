@@ -116,11 +116,13 @@ class Modstash(Controller):
 
 		if not songfile:
 			flash('Invalid file.', 'error')
-			return self.render(index_view)
+			raise cherrypy.HTTPRedirect("/uploadform")
+
+		if not songfile.file:
+			flash('Invalid file.', 'error')
+			raise cherrypy.HTTPRedirect("/uploadform")
 		
 		songbytes = songfile.file.read()
-
-		out = "<pre>%s %s %s</pre><br><pre>%s</pre>"
 
 		try:
 			song = load_module(songbytes)
@@ -133,7 +135,6 @@ class Modstash(Controller):
 
 		flash("Song '%s' (%s) uploaded successfully." % (song.name, songfile.filename), 'success')
 		raise cherrypy.HTTPRedirect("/users/%s" % (username, ))
-		#return out % (len(songbytes), songfile.filename, songfile.content_type, song.name)
 
 	@cherrypy.expose
 	def register(self, username=None, password=None, password2=None, email=None):

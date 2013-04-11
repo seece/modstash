@@ -1,5 +1,11 @@
 ﻿body {
-	background-color:#eee;
+	background-color:#222;
+	color:#111;
+	font-family:Verdana;
+}
+
+ul {
+	list-style-type:none;
 }
 
 #main {
@@ -8,11 +14,33 @@
 	margin-left:auto;
 	margin-right:auto;
 	background-color:#fff;
-	padding:5px;
+	padding:0px;
 }
 
 #flashmessages {
 	
+}
+
+label {
+	
+}
+
+.header {
+	margin:15px;
+	padding-top:5px;
+}
+
+#content {
+	margin:24px;
+	
+}
+
+footer {
+	color:#666;
+	background-color:#403838;
+	height:50px;
+	padding-left:40px;
+	padding-top:40px;
 }
 
 li.flash {
@@ -20,6 +48,14 @@ li.flash {
 	display:inline;
 	padding:4px;
 	border:1px solid black;
+}
+
+#loginbox {
+	width:150px;
+	float:right;
+	background-color:#544;
+	color:#cbb;
+	padding:5px;
 }
 
 li.success {
@@ -44,22 +80,35 @@ li.notice {
 }
 
 #logo {
-	
+	text-transform: uppercase;
+	font-family:Arial;
+	font-size:25px;
+	font-weight: bold;
+}
+
+#logo:hover {
+	color:#444;
 }
 
 nav {
-
+	
 }
 
 ul.menu {
 	list-style-type:none;
 	margin:0px;
-	padding:0px;
-	background-color:#ffffff;
+	padding:4px;
+	background-color:#544;
+	color:#eee;
 }
 
 ul.menu li {
 	display: inline;
+}
+
+ul.menu li:hover {
+	display: inline;
+	background-color:#000;
 }
 
 .monospace {
@@ -90,6 +139,13 @@ span.reference_count {
 	left:1em;
 }
 
+.infonotice {
+	color:#889;
+}
+
 #flod_player {
 	border: 1px solid black;
+	width:250px;
+	
+	padding:10px;
 }

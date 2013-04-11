@@ -29,12 +29,14 @@
 	<span id="tracker"></span>
 	<span id="playerstatus">not loaded</span><br>
 	<label> volume:  <input type="range" id="volume" min="0.0" max="1.0" step="0.1" value="1.0"/> </label>
-	<p>warning: the player does not play all modules correctly</p>
 </div>
+
+<span class="infonotice"><p>Note: The player does not play all modules correctly.</p></span>
 
 % if instruments:
 <section>
 <h1>Instruments</h1>
+<p>Click an instrument to view in which songs it has been used.</p>
 <ul class="monospace samplelist">
 	% for ind, ins in enumerate(instruments):
 

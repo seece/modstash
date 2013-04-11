@@ -2,6 +2,9 @@
 <%inherit file="/base.html"/>
 
 <h2>Upload a file</h2>
+
+<p>You can currently only upload <a href="http://en.wikipedia.org/wiki/Module_file">ProTracker modules</a>. The song title and instruments are read automatically from the uploaded file.</p>
+
 <form action="upload" method="post" enctype="multipart/form-data">
 ProTracker module file (.mod): <br>
 <input type="file" name="songfile" /><br />
