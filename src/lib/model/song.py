@@ -63,6 +63,8 @@ class Song:
 	@classmethod
 	@dbconnection
 	def get_newest(cls, amount, conn, cur):
+		"""Fetches the newest songs from the DB."""
+
 		query = "SELECT * FROM song INNER JOIN trimmedname \
 				ON song.id = trimmedname.songid \
 				ORDER BY upload_date DESC \

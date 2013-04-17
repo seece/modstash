@@ -10,12 +10,30 @@
 
 <section>
 <h1>Used in the following songs</h1>
-<ul>
-% for s in songs:
-	<% songr = repr(s) %>
-	<li><a href="/songs/${s['owner']}/${s['nicename']}"> ${s['title'] | h} (${s['filename'] | h}) </a></li>
-% endfor
-</ul>
+<table class="songlist">
+<tr>
+	<th>title</th>
+	<th>uploader</th>
+	<th>upload date</th>
+</tr>
+	% for s in songs:
+		<tr>
+		<td class="songname">
+			<a href="/songs/${s['owner']}/${s['nicename']}">
+			${s['title'] | h}
+			</a>
+		</td>
+		<td>
+			<a href="/users/${s['owner']}">
+			${s['owner'] | h}
+			</a>
+		</td>
+		<td>
+			${s['upload_date'].strftime(config['dateformat']) | h}
+		</td>		
+		</tr>
+	% endfor
+</table>
 </section>
 
 % else:

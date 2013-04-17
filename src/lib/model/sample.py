@@ -30,10 +30,11 @@ class Sample:
 		Sorted newest first. Also adds in the 'nicename'
 		field."""
 
-		query = "SELECT DISTINCT * FROM song WHERE \
+		query = "SELECT DISTINCT * FROM song, trimmedname WHERE \
 				song.id in \
 					(SELECT songid FROM instrument \
 					WHERE sampleid = %s) \
+				AND song.id = trimmedname.songid \
 				ORDER BY upload_date DESC;"
 
 		try:
@@ -43,10 +44,6 @@ class Sample:
 			raise
 
 		result = cur.fetchall()
-		for r in result:
-			name = TrimmedName.get_song_name(r['id'])
-			r['nicename'] = name['nicename']
-			r['owner'] = name['owner']
 
 		return result
 
