@@ -10,12 +10,30 @@ Welcome to <span class="bold">modstash</span>, the number one Amiga module depen
 
 <section>
 	<h1><img src="/static/images/keys_e0.gif" /> Latest songs</h1>
-	<ul>
-	% for s in songs:
-		<% title = s['title'] %>
-		<% nicename = s['nicename'] %>
-		<% owner = s['authors'][0]['username'] %>
-		<li class=""><a href="/songs/${owner}/${nicename}">${title}</a></li> 
-	% endfor
-	</ul>
+	
+	<table class="songlist">
+	<tr>
+		<th>title</th>
+		<th>uploader</th>
+		<th>upload date</th>
+	</tr>
+		% for s in songs:
+			<tr>
+			<td class="songname">
+				<a href="/songs/${s['owner']}/${s['nicename']}">
+				${s['title'] | h}
+				</a>
+			</td>
+			<td>
+				<a href="/users/${s['owner']}">
+				${s['owner'] | h}
+				</a>
+			</td>
+			<td>
+				${s['upload_date'].strftime(config['dateformat']) | h}
+			</td>		
+			</tr>
+		% endfor
+	</table>
+	
 </section>

@@ -63,18 +63,14 @@ class Song:
 	@classmethod
 	@dbconnection
 	def get_newest(cls, amount, conn, cur):
-		query = "SELECT * FROM song \
+		query = "SELECT * FROM song INNER JOIN trimmedname \
+				ON song.id = trimmedname.songid \
 				ORDER BY upload_date DESC \
 				LIMIT %s;"
 
 		cur.execute(query, (amount, ))
 
 		result = cur.fetchall()
-
-		for r in result:
-			authors = cls.get_authors(r['id'])
-			r['nicename'] = TrimmedName.get_song_name(r['id'])['nicename']
-			r['authors'] = authors
 
 		return result
 
