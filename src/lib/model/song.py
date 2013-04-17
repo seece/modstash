@@ -11,7 +11,7 @@ from lib.model.instrument import Instrument
 import lib.model.trimmedname as TrimmedName
 
 class InvalidTrimmedNameException(Exception):
-	"""Thrown if a name look up fails."""
+	"""Thrown if a name lookup fails."""
 	pass
 
 class InvalidAuthorException(Exception):
@@ -164,7 +164,7 @@ class Song:
 	@classmethod
 	@dbconnection
 	def finalize_title(cls, title, username, conn, cur):
-		"""Appends letters to the given title until it's unique.
+		"""Appends characters to the given title until it's unique.
 		
 			The title is compared to the trimmed song names
 			of the user. """

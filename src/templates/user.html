@@ -12,13 +12,29 @@
 	<section>
 	<h1>Songs</h1>
 	% if songs:
-		<ul>
+		<table class="songlist">
+		<tr>
+			<th>filename</th>
+			<th>title</th>
+			<th>upload date</th>
+		</tr>
 		% for s in songs:
-			<li>
-			<a href="/songs/${user['username']}/${s['nicename']}">${s['nicename']}</a>
-			</li>
+			<tr>
+			
+			<td>
+				${s['filename'] | h}
+			</td>
+			<td>
+				<a href="/songs/${user['username']}/${s['nicename']}">
+				${s['title'] | h}
+				</a>
+			</td>
+			<td>
+				${s['upload_date'].strftime(config['dateformat']) | h}
+			</td>		
+			</tr>
 		% endfor
-		</ul>
+		</table>
 	% else:
 		No songs.
 	%endif

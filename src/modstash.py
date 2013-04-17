@@ -90,7 +90,7 @@ class Modstash(Controller):
 			return self.render(error_view, error_message=msg)
 
 		sanitized = User.sanitize_user(person)
-		songs = User.get_user_songs(person["username"])
+		songs = User.get_user_songs_detailed(person["username"])
 		return self.render(user_view, user=sanitized, songs=songs)
 
 	#@cherrypy.expose
@@ -137,7 +137,7 @@ class Modstash(Controller):
 
 		Song.add_song(song, songbytes, songfile, [username,])
 
-		flash("Song '%s' (%s) uploaded successfully." % (song.name, songfile.filename), 'success')
+		flash("Song uploaded successfully.", 'success')
 		raise cherrypy.HTTPRedirect("/users/%s" % (username, ))
 
 	@cherrypy.expose

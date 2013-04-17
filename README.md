@@ -1,6 +1,6 @@
 # modstash
 
-modstash is a website used to share tracked module music. 
+modstash is a website for sharing tracked module music. 
 It's written with Python 3 using CherryPy and Mako. It uses PostgreSQL as an persistence layer.
 
 ## Setting up
@@ -13,8 +13,8 @@ It's also possible to overwrite the database settings by editing the `src/.env` 
 ## Tests
 
 You can run tests with
-        foreman tests.Procfile
+        `foreman tests.Procfile`
 
 or without environment variables you can use just python
-        python tests.py
+        `python tests.py`
 		

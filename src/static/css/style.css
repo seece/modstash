@@ -139,6 +139,12 @@ span.reference_count {
 	left:1em;
 }
 
+table.songlist {
+	width:500px;
+	border-collapse:collapse;
+}
+
+
 .infonotice {
 	color:#889;
 }
@@ -153,4 +159,8 @@ span.reference_count {
 	width:250px;
 	
 	padding:10px;
+}
+
+.playericon {
+	float: right;
 }

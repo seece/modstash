@@ -118,19 +118,40 @@ class User:
 	@classmethod
 	@dbconnection
 	def get_user_songs(cls, username, conn, cur):
-		"""Loads all user song names from the database.
+		"""Loads all user song names & id's from the database.
 		Collaborations are loaded too. Does not load the actual
-		song data, only ids and trimmed names."""
+		song data, only id's and trimmed names."""
 
 		query = 'SELECT songid, nicename FROM trimmedname \
 				WHERE songid IN \
-				(SELECT id FROM song WHERE \
-					song.id IN \
-					(SELECT songid FROM author WHERE username=%s));'
+				(SELECT s.id FROM song s \
+					INNER JOIN author a ON a.songid=s.id \
+					AND a.username = %s);'
 
 		cur.execute(query, (username,))
 		conn.commit()
 		result = cur.fetchall()
+		return result
+
+	@classmethod
+	@dbconnection
+	def get_user_songs_detailed(cls, username, conn, cur):
+		"""Gets all details from all songs where the user
+		is marked being an author."""
+
+		query = 'SELECT * FROM trimmedname, song \
+				WHERE songid IN \
+				(SELECT s.id FROM song s \
+					INNER JOIN author a ON a.songid=s.id \
+					AND a.username = %s) \
+				AND song.id = trimmedname.songid \
+				ORDER BY upload_date DESC;'
+		cur.execute(query, (username,))
+		conn.commit()
+		result = cur.fetchall()
+
+		print(repr(result))
+
 		return result
 
 	@classmethod
