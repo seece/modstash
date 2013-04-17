@@ -5,11 +5,13 @@
 <section>
 
 % if songs:
-<% samplename_r = str(samplename) %>
+<% samplename_r = str(samplename) 
+songamount = len(songs)
+%>
 <h1>Sample: ${sampleid} '${samplename_r | h}'</h1>
 
 <section>
-<h1>Used in the following songs</h1>
+<h1>Used in ${songamount} songs</h1>
 <table class="songlist">
 <tr>
 	<th>title</th>
@@ -38,6 +40,6 @@
 
 % else:
 <h1>Sample</h1>
-<p>Can't find songs using this sample.</p>
+<p>Can't find any song using this sample.</p>
 %endif
 </section>
