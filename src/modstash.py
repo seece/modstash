@@ -5,55 +5,22 @@ import cherrypy
 from lib.modtag.modtag import load_module
 from lib.model.user import User, UserDetailException, UserAlreadyExistsException
 from lib.model.song import Song
+from lib.model.influence import Influence 
 from lib.model.sample import Sample
 from view import *
-from controller import Controller
-from login import Login
-from mako.template import Template
-from mako.lookup import TemplateLookup
 from lib.flash import flash
 from lib.tool.restrict import restrict
+
+from controller import Controller
+from login import Login
+from songpage import Songpage 
 	
 cherrypy.tools.restrict = restrict
 
 def handle_error():
 	cherrypy.response.status = 500
 	cherrypy.response.body = "<p>Internal error occured! We are terribly sorry :(</p>"
-
-class Songpage(Controller):
-	def __init__(self):
-		pass
-
-	def delete(username, songname):
-		if not cherrypy.session.get('username'):
-			raise cherrypy.HTTPError(401)
-
-		if cherrypy.request.method != 'POST':
-			raise cherrypy.HTTPError(404) 
-			
-		songid = Song.get_user_song(username, songname)
-		Song.delete_song(songid)
-		flash("Deleted '%s'" % (songname), 'success')
-		raise cherrypy.HTTPRedirect("/users/" + username)
-
-	@cherrypy.expose
-	def index(self, username, songname, **args):
-		try:
-			song = Song.get_by_trimmedname(username, songname)
-		except Exception as e:
-			print(str(e))
-			return self.render(error_view, 
-					error_message="Song not found :(")
-		
-		if 'delete' in args:
-			return Songpage.delete(username, songname)
-
-		instruments = Song.get_instruments(song['id'], refcount=True)
-		authors = Song.get_authors(song['id'])
-		owner = authors[0]['username'] # the song owner has the song under his url
-
-		return self.render(song_view, song=song, authors=authors,
-				owner=owner, nicename=songname, instruments=instruments)
+	return ""
 
 class Modstash(Controller):
 	"""The main controller object."""
@@ -115,8 +82,9 @@ class Modstash(Controller):
 
 	@cherrypy.expose
 	@cherrypy.tools.restrict(method='POST')
-	def upload(self, songfile):
+	def upload(self, songfile, influence, influence_type):
 		username=cherrypy.session.get('username')
+		influence_list = []
 
 		if not songfile:
 			flash('Invalid file.', 'error')
@@ -135,7 +103,21 @@ class Modstash(Controller):
 					, 'error')
 			return self.render(upload_view)
 
-		Song.add_song(song, songbytes, songfile, [username,])
+		if influence and not influence_type:
+			flash("Invalid influence type!")
+			raise cherrypy.HTTPRedirect("/uploadform")
+
+		if influence:
+			try:
+				influence_id = Influence.get_song_id_from_url(influence)
+			except Excpetion as e:
+				flash("Cannot parse influence url!")
+				raise cherrypy.HTTPRedirect("/uploadform")
+
+			influence_list.append((influence_id, 'inspiration'))
+
+		Song.add_song(song, songbytes, songfile, [username,], influences=influence_list)
+		#Influence.add_internal_influence(songid, songid, 'inspiration')
 
 		flash("Song uploaded successfully.", 'success')
 		raise cherrypy.HTTPRedirect("/users/%s" % (username, ))

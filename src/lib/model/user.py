@@ -150,8 +150,6 @@ class User:
 		conn.commit()
 		result = cur.fetchall()
 
-		print(repr(result))
-
 		return result
 
 	@classmethod

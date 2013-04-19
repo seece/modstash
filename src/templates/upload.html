@@ -6,7 +6,19 @@
 <p>You can currently only upload <a href="http://en.wikipedia.org/wiki/Module_file">ProTracker modules</a>. The song title and instruments are read automatically from the uploaded file.</p>
 
 <form action="upload" method="post" enctype="multipart/form-data">
-ProTracker module file (.mod): <br>
+<label>ProTracker module file (.mod):</label> <br>
 <input type="file" name="songfile" /><br />
+
+<label>Song influence URL<br />
+<input type="text" name="influence" />
+</label><br />
+
+<select name="influence_type">
+  <option value="inspiration" selected>Inspiration</option>
+  <option value="sample">Sample</option>
+  <option value="remix">Remix</option>
+  <option value="cover">Cover</option>
+</select>
+
 <input type="submit" value="Upload"/>
 </form>

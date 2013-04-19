@@ -8,6 +8,7 @@ import database
 from database import dbconnection
 from lib.model.user import User
 from lib.model.instrument import Instrument
+from lib.model.influence import Influence 
 import lib.model.trimmedname as TrimmedName
 
 class InvalidTrimmedNameException(Exception):
@@ -203,7 +204,7 @@ class Song:
 
 	@classmethod
 	@dbconnection
-	def add_song(cls, song, songbytes, songfile, authors, conn, cur):
+	def add_song(cls, song, songbytes, songfile, authors, conn, cur, influences=None):
 		"""Adds a new song to the DB and saves the file to disk.
 			
 			Positional arguments:
@@ -213,12 +214,18 @@ class Song:
 			authors		the song authors as a list, the first one
 						is considered the owner
 
+			Returns the id of the added song.
+			Raises an exception on invalid input.
+
 		"""
 		if len(authors) == 0:
 			raise InvalidAuthorException()
 
 		if not songfile.filename or songfile.filename == "":
 			raise InvalidFilenameException()
+
+		if influences==None:
+			influences=[]
 
 		songid = None
 		username = authors[0]
@@ -243,6 +250,11 @@ class Song:
 		try:
 			cur.execute(songquery,
 					(title, songfile.filename, original_url))
+
+			songid = cur.fetchone()['id']
+			for i in influences:
+				# the first slot is the influence destination id, the second is the type
+				Influence.add_internal_influence(i[0], songid, i[1])
 		except Exception as e:
 			print("Can't insert song: " + str(e))
 			raise
@@ -276,6 +288,7 @@ class Song:
 		cls.add_instruments(song, songid)
 
 		cls.save_to_disk(songbytes, songpath)
+		return songid
 
 	@classmethod
 	def add_instruments(cls, song, songid):
@@ -322,13 +335,15 @@ class Song:
 	@classmethod
 	@dbconnection
 	def delete_song(cls, songid, conn, cur):
-		"""Deletes a song from the database."""
+		"""Deletes a song from the database.
+		Removes all dependencies too."""
 
 		ins_query = "DELETE FROM instrument \
 				WHERE songid = %s;"
 		name_query = "DELETE FROM trimmedname \
 				WHERE songid = %s;"
-		# TODO add Influence deletion here too
+		influence_query = "DELETE FROM influence \
+				WHERE source_id = %s OR destination_id = %s;"
 		author_query = "DELETE FROM author \
 				where songid = %s;"
 		song_query = "DELETE FROM song \
@@ -340,6 +355,7 @@ class Song:
 		try:
 			cur.execute(ins_query, (songid,))
 			cur.execute(name_query, (songid,))
+			cur.execute(influence_query, (songid, songid))
 			cur.execute(author_query, (songid,))
 			cur.execute(song_query, (songid,))
 		except Exception as e:
