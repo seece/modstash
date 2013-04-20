@@ -48,13 +48,13 @@ CREATE TABLE ms.TrimmedName (
 
 -- either destination_id or external_url should be NULL
 CREATE TABLE ms.Influence (
-    source_id       integer  references ms.Song(id) NOT NULL,
-    destination_id  integer  references ms.Song(id),
+    source_id       integer references ms.Song(id),
+    destination_id  integer references ms.Song(id) NOT NULL,
     -- each source_id has its own set of indices
     index           integer NOT NULL,   
     external_url    varchar,
     type            influence_type NOT NULL,
-    PRIMARY KEY(source_id, index)
+    PRIMARY KEY(destination_id, index)
 );
 
 CREATE TABLE ms.Sample (

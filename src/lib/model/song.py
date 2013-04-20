@@ -238,23 +238,23 @@ class Song:
 
 		# the first name in the author list is treated as the owner
 		original_url = cls.filename_to_url(real_filename, username)
-
-		songquery = "INSERT INTO song (title, filename, original_url) \
-				VALUES (%s, %s, %s) \
-				RETURNING id;"
-		authorquery = "INSERT INTO author (songid, username, position, shown_name) \
-				VALUES (%s, %s, %s, %s);"
-		namequery = "INSERT INTO trimmedname (songid, nicename, owner) \
-				VALUES (%s, %s, %s);"
+		
+		songquery = """INSERT INTO song (title, filename, original_url) 
+				VALUES (%s, %s, %s) 
+				RETURNING id;"""
+		authorquery = """INSERT INTO author (songid, username, position, shown_name) 
+				VALUES (%s, %s, %s, %s);"""
+		namequery = """INSERT INTO trimmedname (songid, nicename, owner) 
+				VALUES (%s, %s, %s);"""
 		
 		try:
 			cur.execute(songquery,
 					(title, songfile.filename, original_url))
 
-			songid = cur.fetchone()['id']
-			for i in influences:
-				# the first slot is the influence destination id, the second is the type
-				Influence.add_internal_influence(i[0], songid, i[1])
+			#songid = cur.fetchone()['id']
+			#for i in influences:
+			#	# the first slot is the influence destination id, the second is the type
+			#	Influence.add_internal_influence(i[0], songid, i[1])
 		except Exception as e:
 			print("Can't insert song: " + str(e))
 			raise
