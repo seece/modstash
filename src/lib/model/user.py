@@ -147,7 +147,6 @@ class User:
 				AND song.id = trimmedname.songid \
 				ORDER BY upload_date DESC;'
 		cur.execute(query, (username,))
-		conn.commit()
 		result = cur.fetchall()
 
 		return result

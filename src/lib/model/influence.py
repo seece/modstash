@@ -49,3 +49,17 @@ class Influence:
 		trimmed_name = parts[3]
 		return Song.get_id_by_trimmedname(owner, trimmed_name)
 
+	@classmethod
+	@dbconnection
+	def get_song_influences(cls, songid, conn, cur):
+		query = """	SELECT * from influence
+					WHERE destination_id = %s
+					ORDER BY index ASC;
+				"""
+
+		cur.execute(query, (songid,))
+		result = cur.fetchall()
+
+		return result
+
+

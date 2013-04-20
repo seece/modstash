@@ -23,6 +23,18 @@
 <li>download: <a href="${downloadurl}">${song['filename']}</a></li>
 </ul>
 
+% if influences:
+<section>
+<h1>Influences</h2>
+	<ul>
+	% for inf in influences:
+		<% rep = repr(inf) %>
+		<li>${rep | h}</li>
+	% endfor
+	</ul>
+</section>
+% endif
+
 <div id="flod_player" data-songpath="${downloadurl}">
 	<div class="playericon"><img src="/static/images/sounder_e0.gif" /></div>
 	<button type="button" id="play">Play</button>
