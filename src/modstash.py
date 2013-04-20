@@ -106,20 +106,24 @@ class Modstash(Controller):
 			flash("Invalid influence type!")
 			raise cherrypy.HTTPRedirect("/uploadform")
 
-		songid = Song.add_song(song, songbytes, songfile, [username,], influences=[])
+		songid = Song.add_song(song, songbytes, songfile, [username,])
 
 		flash("Song uploaded successfully.", 'success')
 
 		if influence:
+			influence_id = None
+
 			try:
 				influence_id = Influence.get_song_id_from_url(influence)
 			except Exception as e:
-				flash("Cannot parse influence url!", 'notice')
+				flash("Cannot parse influence url!", 'error')
+				flash("Error: " + str(e), 'error')
 
 			try:
 				Influence.add_internal_influence(influence_id, songid, influence_type)
 			except Exception as e:
 				flash("Song influences were not added.", 'notice')
+				flash("Error: " + str(e), 'error')
 
 		raise cherrypy.HTTPRedirect("/users/%s" % (username, ))
 

@@ -1,4 +1,10 @@
+from urllib.parse import urlparse
+from lib.model.song import Song
 from database import dbconnection
+
+class InvalidSongUrlException(Exception):
+	"""Thrown if get_song_id_from_url is given a malformed url."""
+	pass
 
 class Influence:
 	"""The Influence database model."""
@@ -6,11 +12,12 @@ class Influence:
 	@classmethod
 	@dbconnection
 	def add_internal_influence(cls, source_id, destination_id, inf_type, conn, cur):
+		"""Adds an internal influence to the database."""
 		index = 0
 
-		query = "INSERT INTO influence \
-				(source_id, destination_id, index, external_url, type) \
-				VALUES (%s, %s, %s, %s, %s);"
+		query = """INSERT INTO influence 
+				(source_id, destination_id, index, external_url, type) 
+				VALUES (%s, %s, %s, %s, %s);"""
 
 		try:
 			cur.execute(query, (
@@ -28,5 +35,17 @@ class Influence:
 	@classmethod
 	@dbconnection
 	def get_song_id_from_url(cls, url, conn, cur):
-		#TODO add proper url parsing
-		return 8
+		"""Parses a given song url and returns a song id."""
+		obj = urlparse(url)
+		parts = obj.path.split('/')
+
+		if parts[1] != 'songs':
+			raise InvalidSongUrlException()
+
+		if len(parts) < 4:
+			raise InvalidSongUrlException()
+
+		owner = parts[2]
+		trimmed_name = parts[3]
+		return Song.get_id_by_trimmedname(owner, trimmed_name)
+

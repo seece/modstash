@@ -8,7 +8,6 @@ import database
 from database import dbconnection
 from lib.model.user import User
 from lib.model.instrument import Instrument
-from lib.model.influence import Influence 
 import lib.model.trimmedname as TrimmedName
 
 class InvalidTrimmedNameException(Exception):
@@ -204,7 +203,7 @@ class Song:
 
 	@classmethod
 	@dbconnection
-	def add_song(cls, song, songbytes, songfile, authors, conn, cur, influences=None):
+	def add_song(cls, song, songbytes, songfile, authors, conn, cur):
 		"""Adds a new song to the DB and saves the file to disk.
 			
 			Positional arguments:
@@ -223,9 +222,6 @@ class Song:
 
 		if not songfile.filename or songfile.filename == "":
 			raise InvalidFilenameException()
-
-		if influences==None:
-			influences=[]
 
 		songid = None
 		username = authors[0]
@@ -251,10 +247,6 @@ class Song:
 			cur.execute(songquery,
 					(title, songfile.filename, original_url))
 
-			#songid = cur.fetchone()['id']
-			#for i in influences:
-			#	# the first slot is the influence destination id, the second is the type
-			#	Influence.add_internal_influence(i[0], songid, i[1])
 		except Exception as e:
 			print("Can't insert song: " + str(e))
 			raise
@@ -274,7 +266,6 @@ class Song:
 			raise
 
 		nicename = cls.trim_title(title) or songfile.filename
-		#nicename = cls.finalize_title(nicename, username)
 		nicename = cls.finalize_trimmedname(nicename, username)
 
 		try:
