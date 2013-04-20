@@ -20,7 +20,7 @@ Welcome to <span class="bold">modstash</span>, the number one Amiga module depen
 		% for s in songs:
 			<tr>
 			<td class="songname">
-				<a href="/songs/${s['owner']}/${s['nicename']}">
+				<a href="${make_song_url(s['owner'], s['nicename'])}">
 				${s['title'] | h}
 				</a>
 			</td>
