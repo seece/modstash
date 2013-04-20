@@ -111,6 +111,10 @@ ul.menu li:hover {
 	background-color:#000;
 }
 
+div.influence_box {
+	
+}
+
 .monospace {
 	font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
 }

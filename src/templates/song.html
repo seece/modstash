@@ -17,6 +17,7 @@
 
 <h2>${song['title'] | h}</h2>
 <section>
+
 <span>uploaded by <a href="/users/${owner | h}"> ${owner | h}</a></span>
 <ul>
 <li>upload date: ${song['upload_date'].strftime(config['dateformat']) | h}</li>
@@ -25,6 +26,7 @@
 
 % if influences:
 <section>
+<div class="influence_box">
 <h1>This song has been influenced by</h2>
 	<ul>
 	% for inf in influences:
@@ -35,6 +37,7 @@
 		</li>
 	% endfor
 	</ul>
+</div>
 </section>
 % endif
 
