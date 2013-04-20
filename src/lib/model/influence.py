@@ -52,8 +52,11 @@ class Influence:
 	@classmethod
 	@dbconnection
 	def get_song_influences(cls, songid, conn, cur):
-		query = """	SELECT * from influence
-					WHERE destination_id = %s
+		query = """	SELECT songid, nicename, index, type, title, owner
+					FROM influence 
+					INNER JOIN trimmedname ON source_id = songid 
+					INNER JOIN song ON id = source_id 
+					AND destination_id = %s
 					ORDER BY index ASC;
 				"""
 

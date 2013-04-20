@@ -162,6 +162,10 @@ td.songname {
 	font-weight:bold;
 }
 
+span.tag {
+	text-transform: uppercase;
+	font-family: monospace;
+}
 
 #flod_player {
 	border: 1px solid black;

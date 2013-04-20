@@ -3,6 +3,11 @@ import cherrypy
 from mako.template import Template
 from mako.lookup import TemplateLookup
 
+# used by the template rendering functions
+def make_song_url(username, trimmed_name):
+	return "/songs/%s/%s" % (username, trimmed_name)
+
+
 '''A thin wrapper around a mako Template. Adds some settings to the render parameters.'''
 class View():
 	template_lookup = TemplateLookup(directories=['templates'])
@@ -20,6 +25,7 @@ class View():
 	The public configuration is added to the named argument dict.'''
 	def render(self, **params):
 		params['config'] = self.public_config
+		params['make_song_url'] = make_song_url
 		#params['state'] = {}
 
 		return self.template.render(**params)

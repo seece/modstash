@@ -25,11 +25,14 @@
 
 % if influences:
 <section>
-<h1>Influences</h2>
+<h1>This song has been influenced by</h2>
 	<ul>
 	% for inf in influences:
 		<% rep = repr(inf) %>
-		<li>${rep | h}</li>
+		<% songurl = make_song_url(inf['owner'], inf['nicename']) %>
+		<li>
+			<a href="${songurl}">${inf['title'] | h}<a/> <span class="tag">[${inf['type']}]</span> 
+		</li>
 	% endfor
 	</ul>
 </section>
