@@ -17,17 +17,8 @@ ul {
 	padding:0px;
 }
 
-#flashmessages {
-	
-}
-
 label {
 	
-}
-
-.header {
-	margin:15px;
-	padding-top:5px;
 }
 
 #content {
@@ -43,11 +34,15 @@ footer {
 	padding-top:40px;
 }
 
-li.flash {
-	list-style-type: none;
-	display:inline;
-	padding:4px;
-	border:1px solid black;
+
+/* Forms */
+
+input[type="text"] {
+    width: 140px;
+}
+
+input[type="password"] {
+    width: 140px;
 }
 
 #loginbox {
@@ -56,6 +51,23 @@ li.flash {
 	background-color:#544;
 	color:#cbb;
 	padding:5px;
+}
+
+input#influence_url_box {
+	width: 300px;
+}
+
+/* Flash messages */
+
+#flashmessages {
+	
+}
+
+li.flash {
+	list-style-type: none;
+	display:inline;
+	padding:4px;
+	border:1px solid black;
 }
 
 li.success {
@@ -68,6 +80,13 @@ li.error {
 
 li.notice {
 	border-color:#2222cc;
+}
+
+/* Header & navigation */
+
+.header {
+	margin:15px;
+	padding-top:5px;
 }
 
 .no_link_hilight:link, .no_link_hilight:visited, no_link_hilight:hover {
@@ -110,6 +129,8 @@ ul.menu li:hover {
 	display: inline;
 	background-color:#000;
 }
+
+/* Song page */
 
 div.influence_box {
 	

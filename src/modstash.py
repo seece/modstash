@@ -40,6 +40,10 @@ class Modstash(Controller):
 		return self.render(index_view, songs = top)
 
 	@cherrypy.expose
+	def loginform(self):
+		return self.render(login_view)
+
+	@cherrypy.expose
 	def songs(self, username, songname, **args):
 		return self.songpage(self, username, songname, **args)
 
@@ -110,7 +114,7 @@ class Modstash(Controller):
 
 		flash("Song uploaded successfully.", 'success')
 
-		if influence:
+		if influence and influence != 'empty':
 			influence_id = None
 
 			try:

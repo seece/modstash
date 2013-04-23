@@ -31,10 +31,11 @@ class View():
 		return self.template.render(**params)
 
 
-index_view = View('templates/index.html')
-user_view = View('templates/user.html')
-error_view = View('templates/error.html')
-upload_view = View('templates/upload.html')
-song_view = View('templates/song.html')
-register_view = View('templates/register.html')
-sample_view = View('templates/sample.html')
+index_view 		= View('templates/index.html')
+user_view 		= View('templates/user.html')
+error_view 		= View('templates/error.html')
+upload_view 	= View('templates/upload.html')
+song_view 		= View('templates/song.html')
+register_view 	= View('templates/register.html')
+sample_view 	= View('templates/sample.html')
+login_view		= View('templates/login.html')

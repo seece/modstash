@@ -15,6 +15,7 @@ cherrypy.tools.restrict = restrict
 class Login(Controller):
 	"""	The login controller. 
 		Takes care of logging users in and out.
+
 	"""
 	
 	@cherrypy.expose

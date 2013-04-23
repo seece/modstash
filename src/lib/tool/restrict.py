@@ -1,9 +1,12 @@
 from functools import wraps
 import cherrypy
+from lib.flash import flash
 
 def restrictfunc(group='member', method=None):
 	if not cherrypy.session.get('username'):
-		raise cherrypy.HTTPError('401 Unauthorized')
+		#raise cherrypy.HTTPError('401 Unauthorized')
+		flash(restrict.error_message)
+		raise cherrypy.HTTPRedirect(restrict.loginpath)
 
 	if method:
 		if cherrypy.request.method != method:
@@ -17,3 +20,5 @@ def restrictfunc(group='member', method=None):
 
 # a custom authentication tool
 restrict = cherrypy.Tool('before_handler', restrictfunc)
+restrict.loginpath = "/loginform"
+restrict.error_message = "You must log in to access this page."
