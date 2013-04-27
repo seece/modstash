@@ -4,8 +4,10 @@ import lib.model.trimmedname as TrimmedName
 
 @dbconnection
 def add(samplename, conn, cur):
-	"""Adds a new sample to the DB. 
-	Returns the added id."""
+	"""
+	Adds a new sample to the DB. 
+	Returns the added id.
+	"""
 
 	query = "INSERT INTO sample (name) \
 			VALUES (%s) RETURNING id;"
@@ -21,9 +23,11 @@ def add(samplename, conn, cur):
 
 @dbconnection
 def get_sample_songs(sampleid, conn, cur):
-	"""Fetches all songs that use this sample.
+	"""
+	Fetches all songs that use this sample.
 	Sorted newest first. Also adds in the 'nicename'
-	field."""
+	field.
+	"""
 
 	query = "SELECT DISTINCT * FROM song, trimmedname WHERE \
 			song.id in \

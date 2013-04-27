@@ -12,8 +12,8 @@ class CredentialTests(unittest.TestCase):
 			salt = User.generate_salt(x)
 			self.assertEqual(x, len(salt))
 
-	'''Check that the salt is concatenated to the pw'''
 	def test_password_hash(self):
+		"""Check that the salt is concatenated to the pw"""
 		password = 'supersecret' 
 		h = hashlib.new('sha256')
 		h.update(password.encode('utf-8'))

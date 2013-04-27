@@ -1,12 +1,12 @@
 import cherrypy
 
-'''The main controller class. '''
 class Controller:
+	"""The main controller class. """
 	def __init__(self):
 		pass
 
-	'''Renders a template with some parameters pulled from the active session'''
 	def render(self, view, **params):
+		"""Renders a template with some parameters pulled from the active session"""
 		username=cherrypy.session.get('username')
 		logged_in = username!=None
 

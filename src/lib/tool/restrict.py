@@ -3,6 +3,14 @@ import cherrypy
 from lib.flash import flash
 
 def restrictfunc(group='member', method=None):
+	"""
+	An authentication function used to create a simple
+	CherryPy compatible tool decorator.
+
+	Checks if the current session satisfied the given
+	conditions, if not the user is directed to a login page.
+	"""
+
 	if not cherrypy.session.get('username'):
 		#raise cherrypy.HTTPError('401 Unauthorized')
 		flash(restrict.error_message)

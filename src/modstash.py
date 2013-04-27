@@ -31,25 +31,28 @@ class Modstash(Controller):
 		songpage = Songpage()
 		self.login = login.login
 		self.logout = login.logout
-		#self.songpage = songpage.view
 		self.songpage = Songpage.index
-		#self.delete = songpage.delete
 
 	@cherrypy.expose
 	def index(self):
+		"""The index page handler."""
 		top = Song.get_newest(40)
 		return self.render(index_view, songs = top)
 
 	@cherrypy.expose
 	def loginform(self):
+		"""The login page handler."""
 		return self.render(login_view)
 
 	@cherrypy.expose
 	def songs(self, username, songname, **args):
+		"""The user song listing page handler."""
+
 		return self.songpage(self, username, songname, **args)
 
 	@cherrypy.expose
 	def users(self, who=None, **args):
+		"""User detail page handler."""
 		if not who:
 			# TODO add user listing here?
 			flash('Invalid user.', 'error')
@@ -65,17 +68,10 @@ class Modstash(Controller):
 		songs = User.get_user_songs_detailed(person["username"])
 		return self.render(user_view, user=sanitized, songs=songs)
 
-	#@cherrypy.expose
-	def adduser(self, name):
-		details = {}
-		details["username"] = name
-		details["password"] = "PASSWORD"
-		details["email"] = "e@mail.com" 
-		print("trying to add ", name)
-		return "jea: " + str(User.add_user(details))
-
 	@cherrypy.expose
 	def sample(self, sampleid):
+		"""Sample detail page handler."""
+
 		songs = Sample.get_sample_songs(sampleid)
 		name = Sample.get_name(sampleid)
 		return self.render(sample_view, songs=songs, sampleid=sampleid, samplename=name)
@@ -83,11 +79,14 @@ class Modstash(Controller):
 	@cherrypy.expose
 	@cherrypy.tools.restrict()
 	def uploadform(self):
+		"""Song upload form handler."""
 		return self.render(upload_view)
 
 	@cherrypy.expose
 	@cherrypy.tools.restrict(method='POST')
 	def upload(self, songfile, influence, influence_type):
+		"""Song upload POST endpoint."""
+
 		username=cherrypy.session.get('username')
 
 		if not songfile:
@@ -134,6 +133,8 @@ class Modstash(Controller):
 
 	@cherrypy.expose
 	def register(self, username=None, password=None, password2=None, email=None):
+		"""Registration form page handler."""
+
 		if cherrypy.request.method == 'GET':
 			return self.render(register_view)
 

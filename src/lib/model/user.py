@@ -15,6 +15,7 @@ class UserDetailException(Exception):
 
 @dbconnection
 def get_user(username, conn, cur):
+	"""Fetch user details with the matchin username."""
 	querystr = "SELECT * FROM Member WHERE username=%s"
 	cur.execute(querystr, [username])
 	victim = cur.fetchone()
@@ -22,7 +23,7 @@ def get_user(username, conn, cur):
 	return victim
 
 def sanitize_user(user):
-	"""Removes all private information from a user dictionary"""
+	"""Removes all private information from a user dictionary."""
 	newuser = {
 			'username'	: user['username'],
 			'screen_name' : user['screen_name'],
@@ -34,6 +35,11 @@ def sanitize_user(user):
 	return newuser
 
 def validate_credentials(username, password):
+	"""
+	Checks if a matching username & password pair exists
+	in the database.
+	"""
+
 	user = get_user(username)
 
 	if user==None:
@@ -48,12 +54,22 @@ def validate_credentials(username, password):
 
 
 def validate_email(address):
+	"""
+	Validate an email address.
+	Throws UserDetailException on failure.
+	"""
+
 	if "@" in address:
 		return True
 
 	raise UserDetailException("Invalid email address.")
 
 def validate_password(password):
+	"""
+	Validate a password.
+	Throws UserDetailException on failure.
+	"""
+
 	if len(password) > 512:
 		raise UserDetailException("Password too long (max 512 characters).")
 	if len(password) == 0:
@@ -63,6 +79,7 @@ def validate_password(password):
 
 def generate_salt(length):
 	"""Generates a randomized alphanumeric string of given length"""
+
 	salt = ''
 	characters = string.ascii_letters + string.digits
 	for x in range(length):
@@ -70,6 +87,8 @@ def generate_salt(length):
 	return salt
 
 def hash_password(password, salt):
+	"""Hashes a password together with the given salt."""
+
 	if salt==None:
 		salt=""
 
@@ -108,9 +127,11 @@ def validate_username(username):
 
 @dbconnection
 def get_user_songs(username, conn, cur):
-	"""Loads all user song names & id's from the database.
+	"""
+	Loads all user song names & id's from the database.
 	Collaborations are loaded too. Does not load the actual
-	song data, only id's and trimmed names."""
+	song data, only id's and trimmed names.
+	"""
 
 	query = 'SELECT songid, nicename FROM trimmedname \
 			WHERE songid IN \
@@ -125,8 +146,10 @@ def get_user_songs(username, conn, cur):
 
 @dbconnection
 def get_user_songs_detailed(username, conn, cur):
-	"""Gets all details from all songs where the user
-	is marked being an author."""
+	"""
+	Gets all details from all songs where the user
+	is marked being an author.
+	"""
 
 	query = 'SELECT * FROM trimmedname, song \
 			WHERE songid IN \
@@ -142,7 +165,8 @@ def get_user_songs_detailed(username, conn, cur):
 
 @dbconnection
 def log_visit(username, conn, cur):
-	"""Updates user's last_logged field"""
+	"""Updates user's last_logged field."""
+
 	query = 'UPDATE Member SET last_logged = CURRENT_TIMESTAMP \
 			WHERE username = %s;'
 	try:
@@ -153,6 +177,11 @@ def log_visit(username, conn, cur):
 	conn.commit()
 
 def add_user(**args):
+	"""
+	Adds a user to the database.
+	Throws UserDetailException on failure.
+	"""
+
 	required = ["username", "password", "email"]
 
 	for r in required:

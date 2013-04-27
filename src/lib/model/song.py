@@ -75,6 +75,8 @@ def get_newest(amount, conn, cur):
 
 @dbconnection 
 def get_id_by_trimmedname(username, trimmedname, conn, cur):
+	"""Fetch song id with the string identifier."""
+
 	query = "SELECT songid FROM trimmedname \
 			WHERE nicename = %s AND owner = %s;"
 	try:
@@ -92,6 +94,8 @@ def get_id_by_trimmedname(username, trimmedname, conn, cur):
 			
 @dbconnection
 def get_user_song(username, trimmedname, conn, cur):
+	"""Fetch a single song id of the given user."""
+
 	query = "SELECT songid FROM trimmedname \
 			WHERE nicename = %s \
 			AND owner = %s;" 
@@ -107,7 +111,8 @@ def get_user_song(username, trimmedname, conn, cur):
 	return songid
 
 def get_by_trimmedname(username, trimmedname):
-	songid =get_user_song(username, trimmedname)
+	"""Returns a user song matching the given trimmed name."""
+	songid = get_user_song(username, trimmedname)
 
 	if not songid:
 		raise InvalidTrimmedNameException()
@@ -130,6 +135,7 @@ def get_by_id(songid, conn, cur):
 	return cur.fetchone()
 
 def save_to_disk(songbytes, songpath):
+	"""Saves the given bytes to disk."""
 	f = open(songpath, 'wb')
 	f.write(songbytes)
 	f.close()
@@ -151,10 +157,12 @@ def filename_to_url(filename, username):
 
 @dbconnection
 def finalize_title(title, username, conn, cur):
-	"""Appends characters to the given title until it's unique.
+	"""
+	Appends characters to the given title until it's unique.
 	
-		The title is compared to the trimmed song names
-		of the user. """
+	The title is compared to the trimmed song names
+	of the user. 
+	"""
 
 	songs = User.get_user_songs(username)
 	finalname = title
@@ -174,6 +182,8 @@ def finalize_title(title, username, conn, cur):
 
 @dbconnection
 def finalize_trimmedname(title, username, conn, cur):
+	"""Appends underscores to the name until it's unique."""
+
 	finalname = title
 	
 	while True:
@@ -191,17 +201,18 @@ def finalize_trimmedname(title, username, conn, cur):
 
 @dbconnection
 def add_song(song, songbytes, songfile, authors, conn, cur):
-	"""Adds a new song to the DB and saves the file to disk.
+	"""
+	Adds a new song to the DB and saves the file to disk.
 		
-		Positional arguments:
+	Positional arguments:
 		song		a tracker song object loaded with load_module
 		songbytes	the binary representation of the song
 		songfile	the file object passed in by cherrypy
 		authors		the song authors as a list, the first one
 					is considered the owner
 
-		Returns the id of the added song.
-		Raises an exception on invalid input.
+	Returns the id of the added song.
+	Raises an exception on invalid input.
 
 	"""
 	if len(authors) == 0:
@@ -269,8 +280,10 @@ def add_song(song, songbytes, songfile, authors, conn, cur):
 	return songid
 
 def add_instruments(song, songid):
-	"""Adds all (non-empty) instruments of the given song
-	to the sample database."""
+	"""
+	Adds all (non-empty) instruments of the given song
+	to the sample database.
+	"""
 
 	for index, ins in enumerate(song.instruments):
 		if not ins.sample:
@@ -283,8 +296,10 @@ def add_instruments(song, songid):
 
 @dbconnection
 def get_instruments(songid, conn, cur, refcount=False):
-	"""Returns all instruments used in a song. 
-	Calculates also a refcount-column if enabled."""
+	"""
+	Returns all instruments used in a song. 
+	Calculates also a refcount-column if enabled.
+	"""
 
 	query = "SELECT * FROM instrument \
 			WHERE songid = %s \
@@ -310,8 +325,10 @@ def get_instruments(songid, conn, cur, refcount=False):
 
 @dbconnection
 def delete_song(songid, conn, cur):
-	"""Deletes a song from the database.
-	Removes all dependencies too."""
+	"""
+	Deletes a song from the database.
+	Removes all dependencies too.
+	"""
 
 	ins_query = "DELETE FROM instrument \
 			WHERE songid = %s;"

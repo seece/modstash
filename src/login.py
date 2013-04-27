@@ -14,12 +14,13 @@ cherrypy.tools.restrict = restrict
 
 class Login(Controller):
 	"""	The login controller. 
-		Takes care of logging users in and out.
+		Takes care of signing users in and out.
 
 	"""
 	
 	@cherrypy.expose
 	def login(self, username=None, password=None):
+		"""The login POST endpoint."""
 		if cherrypy.request.method != "POST":
 			raise cherrypy.HTTPError(404)
 

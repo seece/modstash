@@ -13,10 +13,13 @@ from view import *
 from controller import Controller
 
 class Songpage(Controller):
+	"""The songpage controller class."""
 	def __init__(self):
 		pass
 
 	def delete(username, songname):
+		"""Song deletion page handler."""
+
 		if not cherrypy.session.get('username'):
 			raise cherrypy.HTTPError(401)
 
@@ -30,6 +33,8 @@ class Songpage(Controller):
 
 	@cherrypy.expose
 	def index(self, username, songname, **args):
+		"""Lists song details, if possible."""
+
 		try:
 			song = Song.get_by_trimmedname(username, songname)
 		except Exception as e:

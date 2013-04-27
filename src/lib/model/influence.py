@@ -13,7 +13,8 @@ def add_internal_influence(source_id, destination_id, inf_type, conn, cur):
 
 	query = """INSERT INTO influence 
 			(source_id, destination_id, index, external_url, type) 
-			VALUES (%s, %s, %s, %s, %s);"""
+			VALUES (%s, %s, %s, %s, %s);
+			"""
 
 	try:
 		cur.execute(query, (
@@ -46,6 +47,8 @@ def get_song_id_from_url(url, conn, cur):
 
 @dbconnection
 def get_song_influences(songid, conn, cur):
+	"""Fetch all influences of the given song from the db."""
+
 	query = """	SELECT songid, nicename, index, type, title, owner
 				FROM influence 
 				INNER JOIN trimmedname ON source_id = songid 

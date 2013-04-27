@@ -36,13 +36,19 @@ def cursor(conn):
 	return cur
 
 def test_connection():
+	"""Tries to open and close a database connection."""
+
 	conn = connection()
 	conn.close()
 	return True
 
 def dbconnection(f):
-	"""A decorator that provides a database connection and 
-	a related cursor to the function."""
+	"""
+	A decorator that provides a database connection and 
+	a related cursor to the function as respective conn 
+	and cur named parameters.
+
+	"""
 
 	@wraps(f)
 	def connection_wrapper(*args, **kwargs):
