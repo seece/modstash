@@ -81,7 +81,7 @@
 
 <section>
 % if logged_in:
-% if username == owner:
+% if username == owner or member_type == 'admin':
 <h1>Actions</h1>
 <form action="./${nicename}?delete" method="post">
 	<input type="submit" value="Delete song">

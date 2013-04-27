@@ -18,13 +18,20 @@ class Songpage(Controller):
 		pass
 
 	def delete(username, songname):
-		"""Song deletion page handler."""
+		"""Attempts to delete a song."""
 
 		if not cherrypy.session.get('username'):
 			raise cherrypy.HTTPError(401)
 
 		if cherrypy.request.method != 'POST':
 			raise cherrypy.HTTPError(404) 
+
+		current_user = cherrypy.session.get('username')
+		user = User.get_user(current_user)
+
+		if user['member_type'] != 'admin':
+			if current_user != username:
+				raise cherrypy.HTTPError(401)
 			
 		songid = Song.get_user_song(username, songname)
 		Song.delete_song(songid)

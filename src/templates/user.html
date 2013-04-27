@@ -39,4 +39,21 @@
 		No songs.
 	%endif
 	</section>
+	
+	% if logged_in:
+	% if username == owner or member_type == 'admin':
+	<section>
+		<h1>Admin actions</h1>
+		% if user['member_type'] == 'banned':
+			<form action="./${user['username']}?unban" method="post">
+				<input type="submit" value="Unban user">
+			</form>
+		% elif user['member_type'] == 'member' or user['member_type'] == 'moderator':
+			<form action="./${user['username']}?ban" method="post">
+				<input type="submit" value="Ban user">
+			</form>
+		% endif
+	</section>
+	% endif
+	% endif
 </section>

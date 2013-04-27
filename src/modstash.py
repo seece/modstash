@@ -23,6 +23,7 @@ def handle_error():
 	cherrypy.response.body = "<p>Internal error occured! We are terribly sorry :(</p>"
 	return ""
 
+
 class Modstash(Controller):
 	"""The main controller object."""
 
@@ -32,6 +33,31 @@ class Modstash(Controller):
 		self.login = login.login
 		self.logout = login.logout
 		self.songpage = Songpage.index
+
+	def set_user_type(self, target, status):
+		"""
+		Attempts to set user member_type.
+		Checks the credentials of the current session.
+		"""
+
+		if not cherrypy.session.get('username'):
+			raise cherrypy.HTTPError(401)
+
+		username=cherrypy.session.get('username')
+		user = User.get_user(username)
+
+		if user['member_type'] != 'admin':
+			raise cherrypy.HTTPError(401)
+		
+		try:
+			User.set_user_type(target, status)
+		except:
+			flash("Can't set user status!", 'error')
+		else:
+			flash("User status set to %s!" % status, 'success')
+
+		raise cherrypy.HTTPRedirect("/users/%s" % target)
+			
 
 	@cherrypy.expose
 	def index(self):
@@ -63,6 +89,11 @@ class Modstash(Controller):
 		if person == None:
 			msg = "User '%s' not found!" % (str(who))
 			return self.render(error_view, error_message=msg)
+
+		if 'ban' in args:
+			self.set_user_type(who, 'banned')
+		elif 'unban' in args:
+			self.set_user_type(who, 'member')
 
 		sanitized = User.sanitize_user(person)
 		songs = User.get_user_songs_detailed(person["username"])

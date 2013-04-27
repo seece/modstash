@@ -32,6 +32,7 @@ class View():
 		"""Renders the view with the given arguments.
 		The public configuration is added to the named argument dict."""
 
+
 		params['config'] = self.public_config
 		params['make_song_url'] = make_song_url
 

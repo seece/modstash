@@ -182,6 +182,18 @@ def log_visit(username, conn, cur):
 
 	conn.commit()
 
+@dbconnection
+def set_user_type(username, status, conn, cur):
+	"""Sets the group of a user."""
+
+	query = """
+			UPDATE member
+			SET member_type=%s
+			WHERE username=%s;
+			"""
+	cur.execute(query, (status, username))
+	conn.commit()
+
 def add_user(**args):
 	"""
 	Adds a user to the database.

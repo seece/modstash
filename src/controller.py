@@ -1,4 +1,5 @@
 import cherrypy
+import lib.model.user as User
 
 class Controller:
 	"""The main controller class. """
@@ -12,6 +13,14 @@ class Controller:
 
 		if not 'error_message' in params:
 			params['error_message'] = ''
+
+		try:
+			current_user = cherrypy.session.get('username')
+			user = User.get_user(username)
+			
+			params['member_type'] = user['member_type']
+		except Exception as e:
+			params['member_type'] = ''
 
 		params['flash'] = flash=cherrypy.session.get('flash')
 		params['username'] = username
