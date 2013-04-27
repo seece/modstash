@@ -330,16 +330,14 @@ def delete_song(songid, conn, cur):
 	Removes all dependencies too.
 	"""
 
-	ins_query = "DELETE FROM instrument \
-			WHERE songid = %s;"
-	name_query = "DELETE FROM trimmedname \
-			WHERE songid = %s;"
-	influence_query = "DELETE FROM influence \
-			WHERE source_id = %s OR destination_id = %s;"
-	author_query = "DELETE FROM author \
-			where songid = %s;"
-	song_query = "DELETE FROM song \
-			where id = %s;"
+	ins_query = "DELETE FROM instrument WHERE songid = %s;"
+	name_query = "DELETE FROM trimmedname WHERE songid = %s;"
+	influence_query = """
+			DELETE FROM influence 
+			WHERE source_id = %s OR destination_id = %s;
+			"""
+	author_query = "DELETE FROM author WHERE songid = %s;"
+	song_query = "DELETE FROM song WHERE id = %s;"
 
 	song =get_by_id(songid)
 	songpath = song["original_url"]

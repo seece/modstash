@@ -7,8 +7,10 @@ class NoSuchHashException(Exception):
 def get_sample_id(samplehash, filesize, conn, cur):
 	"""Fetch the sample id with the matching MD5 hash."""
 
-	query = "SELECT * FROM SampleHash \
-			WHERE hash = %s AND filesize = %s;"
+	query = """
+			SELECT * FROM SampleHash 
+			WHERE hash = %s AND filesize = %s;
+			"""
 
 	try:
 		cur.execute(query, (samplehash, filesize))
@@ -24,9 +26,11 @@ def get_sample_id(samplehash, filesize, conn, cur):
 def add(md5hash, filesize, sampleid, conn, cur):
 	"""Adds a new hash to the database."""
 	
-	query = "INSERT INTO SampleHash \
-			(sampleid, hash, filesize) \
-			VALUES (%s, %s, %s);"
+	query = """
+			INSERT INTO SampleHash 
+			(sampleid, hash, filesize) 
+			VALUES (%s, %s, %s);
+			"""
 
 	try:
 		cur.execute(query, (sampleid, md5hash, filesize))

@@ -22,9 +22,11 @@ def add_instrument(songid, ins, index, cur, conn):
 		sampleid = Sample.add(samplename)
 		SampleHash.add(md5hash, ins.sample.length, sampleid)
 
-	query = "INSERT INTO Instrument \
-			(sampleid, songid, index, name) \
-			VALUES (%s, %s, %s, %s);"
+	query = """
+			INSERT INTO Instrument 
+			(sampleid, songid, index, name) 
+			VALUES (%s, %s, %s, %s);
+			"""
 
 	try:
 		cur.execute(query, (sampleid, songid, index, name))

@@ -11,7 +11,8 @@ def add_internal_influence(source_id, destination_id, inf_type, conn, cur):
 	"""Adds an internal influence to the database."""
 	index = 0
 
-	query = """INSERT INTO influence 
+	query = """
+			INSERT INTO influence 
 			(source_id, destination_id, index, external_url, type) 
 			VALUES (%s, %s, %s, %s, %s);
 			"""

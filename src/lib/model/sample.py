@@ -9,8 +9,10 @@ def add(samplename, conn, cur):
 	Returns the added id.
 	"""
 
-	query = "INSERT INTO sample (name) \
-			VALUES (%s) RETURNING id;"
+	query = """
+			INSERT INTO sample (name) 
+			VALUES (%s) RETURNING id;
+			"""
 
 	try:
 		cur.execute(query, (samplename,))
@@ -29,12 +31,14 @@ def get_sample_songs(sampleid, conn, cur):
 	field.
 	"""
 
-	query = "SELECT DISTINCT * FROM song, trimmedname WHERE \
-			song.id in \
-				(SELECT songid FROM instrument \
-				WHERE sampleid = %s) \
-			AND song.id = trimmedname.songid \
-			ORDER BY upload_date DESC;"
+	query = """
+			SELECT DISTINCT * FROM song, trimmedname WHERE 
+			song.id in 
+				(SELECT songid FROM instrument 
+				WHERE sampleid = %s) 
+			AND song.id = trimmedname.songid 
+			ORDER BY upload_date DESC;
+			"""
 
 	try:
 		cur.execute(query, (sampleid,))
@@ -49,8 +53,10 @@ def get_sample_songs(sampleid, conn, cur):
 @dbconnection
 def get_name(sampleid, conn, cur):
 	"""Gets the plaintext sample name."""
-	query = "SELECT * FROM sample WHERE \
-			sample.id = %s;"
+	query = """
+			SELECT * FROM sample WHERE 
+			sample.id = %s;
+			"""
 
 	try:
 		cur.execute(query, (sampleid,))
