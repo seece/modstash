@@ -1,5 +1,5 @@
 ﻿import unittest
-from lib.model.song import Song
+import lib.model.song as Song
 from lib.model.song import get_static_song_path
 from lib.model.song import InvalidAuthorException, InvalidFilenameException
 

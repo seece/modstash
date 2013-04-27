@@ -1,6 +1,6 @@
 import unittest
 import hashlib
-from lib.model.user import User
+import lib.model.user as User
 
 class CredentialTests(unittest.TestCase):
 	
@@ -22,12 +22,13 @@ class CredentialTests(unittest.TestCase):
 		self.assertNotEqual(h.hexdigest(), properdigest)
 
 	def test_validate_username(self):
-		self.assertFalse(User.validate_username(""))
-		self.assertFalse(User.validate_username("q"))
+		self.assertRaises(User.UserDetailException, User.validate_username, "")
+		self.assertRaises(User.UserDetailException, User.validate_username, "q")
+		self.assertTrue(User.validate_username("kuapo"))
 
 	def test_validate_email(self):
-		self.assertFalse(User.validate_email(""))
-		self.assertFalse(User.validate_email("lol"))
+		self.assertRaises(User.UserDetailException, User.validate_email, "")
+		self.assertRaises(User.UserDetailException, User.validate_email, "-_sda q")
 		self.assertTrue(User.validate_email("hello@example.com"))
 
 
