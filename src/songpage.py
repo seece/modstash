@@ -3,10 +3,11 @@ import os
 import cherrypy
 
 from lib.modtag.modtag import load_module
-from lib.model.user import User, UserDetailException, UserAlreadyExistsException
-from lib.model.song import Song
-from lib.model.influence import Influence
-from lib.model.sample import Sample
+import lib.model.user as User
+from lib.model.user import UserDetailException, UserAlreadyExistsException
+import lib.model.song as Song
+import lib.model.influence as Influence
+import lib.model.sample as Sample
 from lib.flash import flash
 from view import *
 from controller import Controller

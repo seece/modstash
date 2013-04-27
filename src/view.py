@@ -8,7 +8,7 @@ def make_song_url(username, trimmed_name):
 	return "/songs/%s/%s" % (username, trimmed_name)
 
 
-'''A thin wrapper around a mako Template. Adds some settings to the render parameters.'''
+'''A thin wrapper around a Mako Template. Adds some settings to the render parameters.'''
 class View():
 	template_lookup = TemplateLookup(directories=['templates'])
 

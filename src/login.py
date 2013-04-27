@@ -2,7 +2,7 @@ import sys
 import os
 import cherrypy
 
-from lib.model.user import User
+import lib.model.user as User
 from view import *
 from controller import Controller
 from mako.template import Template

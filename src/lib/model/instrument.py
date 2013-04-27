@@ -1,38 +1,37 @@
 import hashlib
-from lib.model.sample import *
-from lib.model.samplehash import *
+from database import dbconnection
+import lib.model.sample as Sample
+import lib.model.samplehash as SampleHash
+from lib.model.samplehash import NoSuchHashException
 
 
-class Instrument:
-	"""The Instrument model."""
+@dbconnection
+def add_instrument(songid, ins, index, cur, conn):
+	"""Adds an instrument to the database."""
 
-	@classmethod
-	@dbconnection
-	def add_instrument(cls, songid, ins, index, cur, conn):
-		m = hashlib.md5(ins.sample.data)
-		md5hash = m.hexdigest()
-		#print("INST: " + str(i.sample.name) + " = " + samplehash + " is " + str(i.sample.length))
-		name = ins.sample.name or ''
+	m = hashlib.md5(ins.sample.data)
+	md5hash = m.hexdigest()
+	name = ins.sample.name or ''
 
-		sampleid = None
+	sampleid = None
 
-		try:
-			sampleid = SampleHash.get_sample_id(md5hash, ins.sample.length)
-		except NoSuchHashException as e:
-			samplename = ins.sample.name or ''
-			sampleid = Sample.add(samplename)
-			SampleHash.add(md5hash, ins.sample.length, sampleid)
+	try:
+		sampleid = SampleHash.get_sample_id(md5hash, ins.sample.length)
+	except NoSuchHashException as e:
+		samplename = ins.sample.name or ''
+		sampleid = Sample.add(samplename)
+		SampleHash.add(md5hash, ins.sample.length, sampleid)
 
-		query = "INSERT INTO Instrument \
-				(sampleid, songid, index, name) \
-				VALUES (%s, %s, %s, %s);"
+	query = "INSERT INTO Instrument \
+			(sampleid, songid, index, name) \
+			VALUES (%s, %s, %s, %s);"
 
-		try:
-			cur.execute(query, (sampleid, songid, index, name))
-		except Exception as e:
-			print("Can't add instrument: %s" % (str(e)))
-			raise
+	try:
+		cur.execute(query, (sampleid, songid, index, name))
+	except Exception as e:
+		print("Can't add instrument: %s" % (str(e)))
+		raise
 
-		conn.commit()
+	conn.commit()
 
 

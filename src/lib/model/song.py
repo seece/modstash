@@ -6,8 +6,8 @@ from unidecode import unidecode
 import psycopg2
 import database
 from database import dbconnection
-from lib.model.user import User
-from lib.model.instrument import Instrument
+import lib.model.user as User
+import lib.model.instrument as Instrument
 import lib.model.trimmedname as TrimmedName
 
 class InvalidTrimmedNameException(Exception):
@@ -45,321 +45,305 @@ def get_song_path(songbytes, song, songfile, username):
 def get_static_song_path(songpath):
 	return os.path.join(song_static_dir, songpath)
 
-class Song:
-	@classmethod
-	@dbconnection
-	def get_authors(cls, songid, conn, cur):
-		"""Returns a sorted list of song authors."""
+@dbconnection
+def get_authors(songid, conn, cur):
+	"""Returns a sorted list of song authors."""
 
-		query = "SELECT * from author \
-				WHERE songid=%s \
-				ORDER BY position ASC;"
+	query = "SELECT * from author \
+			WHERE songid=%s \
+			ORDER BY position ASC;"
 
-		cur.execute(query, (songid,))
+	cur.execute(query, (songid,))
 
-		conn.commit()
-		return cur.fetchall()
+	conn.commit()
+	return cur.fetchall()
 
-	@classmethod
-	@dbconnection
-	def get_newest(cls, amount, conn, cur):
-		"""Fetches the newest songs from the DB."""
+@dbconnection
+def get_newest(amount, conn, cur):
+	"""Fetches the newest songs from the DB."""
 
-		query = "SELECT * FROM song INNER JOIN trimmedname \
-				ON song.id = trimmedname.songid \
-				ORDER BY upload_date DESC \
-				LIMIT %s;"
+	query = "SELECT * FROM song INNER JOIN trimmedname \
+			ON song.id = trimmedname.songid \
+			ORDER BY upload_date DESC \
+			LIMIT %s;"
 
-		cur.execute(query, (amount, ))
+	cur.execute(query, (amount, ))
 
-		result = cur.fetchall()
+	result = cur.fetchall()
 
-		return result
+	return result
 
-	@classmethod
-	@dbconnection 
-	def get_id_by_trimmedname(cls, username, trimmedname, conn, cur):
-		query = "SELECT songid FROM trimmedname \
-				WHERE nicename = %s AND owner = %s;"
-		try:
-			cur.execute(query, (trimmedname, username))
-		except Exception as e:
-			print("Can't find song id: " + str(e))
+@dbconnection 
+def get_id_by_trimmedname(username, trimmedname, conn, cur):
+	query = "SELECT songid FROM trimmedname \
+			WHERE nicename = %s AND owner = %s;"
+	try:
+		cur.execute(query, (trimmedname, username))
+	except Exception as e:
+		print("Can't find song id: " + str(e))
 
-		result = cur.fetchone()
+	result = cur.fetchone()
 
-		if not result:
-			return None
+	if not result:
+		return None
 
-		return result['songid'] 
+	return result['songid'] 
+
+			
+@dbconnection
+def get_user_song(username, trimmedname, conn, cur):
+	query = "SELECT songid FROM trimmedname \
+			WHERE nicename = %s \
+			AND owner = %s;" 
+
+	try:
+		cur.execute(query,
+				(trimmedname, username))
+	except Exception as e:
+		print("Can't find song id: " + str(e))
+		raise
+
+	songid = cur.fetchone()['songid']
+	return songid
+
+def get_by_trimmedname(username, trimmedname):
+	songid =get_user_song(username, trimmedname)
+
+	if not songid:
+		raise InvalidTrimmedNameException()
+
+	return get_by_id(songid)
+
+@dbconnection
+def get_by_id(songid, conn, cur):
+	"""Fetch a song with the given id from the DB."""
+	query = "SELECT * FROM song WHERE id = %s;"
 	
-				
-	@classmethod
-	@dbconnection
-	def get_user_song(cls, username, trimmedname, conn, cur):
-		query = "SELECT songid FROM trimmedname \
-				WHERE nicename = %s \
-				AND owner = %s;" 
+	try:
+		cur.execute(query,
+				(songid,))
+	except Exception as e:
+		print("Can't find song: " + str(e))
+		raise
 
-		try:
-			cur.execute(query,
-					(trimmedname, username))
-		except Exception as e:
-			print("Can't find song id: " + str(e))
-			raise
+	conn.commit()
+	return cur.fetchone()
 
-		songid = cur.fetchone()['songid']
-		return songid
+def save_to_disk(songbytes, songpath):
+	f = open(songpath, 'wb')
+	f.write(songbytes)
+	f.close()
 
-	@classmethod
-	def get_by_trimmedname(cls, username, trimmedname):
-		songid = cls.get_user_song(username, trimmedname)
+def trim_title(title):
+	"""Trims the given song title to be used in an URL"""
+	trimmed = title.strip()
+	trimmed = re.sub(r'\s+', '-', trimmed) 
+	trimmed = re.sub(r'_+', '_', trimmed)
+	trimmed = re.sub(r'-+', '-', trimmed)
+	trimmed = unidecode(trimmed)
+	trimmed = re.sub(r'[^A-Za-z0-9_-]', '', trimmed)
+	trimmed = trimmed.lower()
+	return trimmed
 
-		if not songid:
-			raise InvalidTrimmedNameException()
+def filename_to_url(filename, username):
+	"""Turns a song filename to a proper relative url."""
+	return username + "/" + filename
 
-		return cls.get_by_id(songid)
+@dbconnection
+def finalize_title(title, username, conn, cur):
+	"""Appends characters to the given title until it's unique.
+	
+		The title is compared to the trimmed song names
+		of the user. """
 
-	@classmethod
-	@dbconnection
-	def get_by_id(cls, songid, conn, cur):
-		"""Fetch a song with the given id from the DB."""
-		query = "SELECT * FROM song WHERE id = %s;"
-		
-		try:
-			cur.execute(query,
-					(songid,))
-		except Exception as e:
-			print("Can't find song: " + str(e))
-			raise
-
-		conn.commit()
-		return cur.fetchone()
-
-	@classmethod
-	def save_to_disk(cls, songbytes, songpath):
-		f = open(songpath, 'wb')
-		f.write(songbytes)
-		f.close()
-
-	@classmethod
-	def trim_title(cls, title):
-		"""Trims the given song title to be used in an URL"""
-		trimmed = title.strip()
-		trimmed = re.sub(r'\s+', '-', trimmed) 
-		trimmed = re.sub(r'_+', '_', trimmed)
-		trimmed = re.sub(r'-+', '-', trimmed)
-		trimmed = unidecode(trimmed)
-		trimmed = re.sub(r'[^A-Za-z0-9_-]', '', trimmed)
-		trimmed = trimmed.lower()
-		return trimmed
-
-	@classmethod
-	def filename_to_url(cls, filename, username):
-		"""Turns a song filename to a proper relative url."""
-		return username + "/" + filename
-
-	@classmethod
-	@dbconnection
-	def finalize_title(cls, title, username, conn, cur):
-		"""Appends characters to the given title until it's unique.
-		
-			The title is compared to the trimmed song names
-			of the user. """
-
-		songs = User.get_user_songs(username)
-		finalname = title
-		
-		while True:
-			hit = False
-			for s in songs:
-				if s['nicename'] == finalname:
-					hit = True
-
-			if not hit:
-				break
-
-			finalname += '_'
-
-		return finalname
-
-	@classmethod
-	@dbconnection
-	def finalize_trimmedname(cls, title, username, conn, cur):
-		finalname = title
-		
-		while True:
-			hit = False
-			if cls.get_id_by_trimmedname(username, finalname):
+	songs = User.get_user_songs(username)
+	finalname = title
+	
+	while True:
+		hit = False
+		for s in songs:
+			if s['nicename'] == finalname:
 				hit = True
 
-			if not hit:
-				break
+		if not hit:
+			break
 
-			finalname += '_'
+		finalname += '_'
 
-		return finalname
+	return finalname
+
+@dbconnection
+def finalize_trimmedname(title, username, conn, cur):
+	finalname = title
+	
+	while True:
+		hit = False
+		if get_id_by_trimmedname(username, finalname):
+			hit = True
+
+		if not hit:
+			break
+
+		finalname += '_'
+
+	return finalname
 
 
-	@classmethod
-	@dbconnection
-	def add_song(cls, song, songbytes, songfile, authors, conn, cur):
-		"""Adds a new song to the DB and saves the file to disk.
-			
-			Positional arguments:
-			song		a tracker song object loaded with load_module
-			songbytes	the binary representation of the song
-			songfile	the file object passed in by cherrypy
-			authors		the song authors as a list, the first one
-						is considered the owner
-
-			Returns the id of the added song.
-			Raises an exception on invalid input.
-
-		"""
-		if len(authors) == 0:
-			raise InvalidAuthorException()
-
-		if not songfile.filename or songfile.filename == "":
-			raise InvalidFilenameException()
-
-		songid = None
-		username = authors[0]
-		songpath, real_filename = get_song_path(songbytes, song, songfile, username)
-
-		title = songfile.filename
-
-		if song.name and song.name != "":
-			title = song.name	
-
-		# the first name in the author list is treated as the owner
-		original_url = cls.filename_to_url(real_filename, username)
+@dbconnection
+def add_song(song, songbytes, songfile, authors, conn, cur):
+	"""Adds a new song to the DB and saves the file to disk.
 		
-		songquery = """INSERT INTO song (title, filename, original_url) 
-				VALUES (%s, %s, %s) 
-				RETURNING id;"""
-		authorquery = """INSERT INTO author (songid, username, position, shown_name) 
-				VALUES (%s, %s, %s, %s);"""
-		namequery = """INSERT INTO trimmedname (songid, nicename, owner) 
-				VALUES (%s, %s, %s);"""
-		
-		try:
-			cur.execute(songquery,
-					(title, songfile.filename, original_url))
+		Positional arguments:
+		song		a tracker song object loaded with load_module
+		songbytes	the binary representation of the song
+		songfile	the file object passed in by cherrypy
+		authors		the song authors as a list, the first one
+					is considered the owner
 
-		except Exception as e:
-			print("Can't insert song: " + str(e))
-			raise
+		Returns the id of the added song.
+		Raises an exception on invalid input.
 
-		try:
-			songid = cur.fetchone()['id']
-			index = 0
+	"""
+	if len(authors) == 0:
+		raise InvalidAuthorException()
 
-			# we assume all authors are in the database
-			# TODO check all author names first from the DB
+	if not songfile.filename or songfile.filename == "":
+		raise InvalidFilenameException()
 
-			for name in authors:
-				cur.execute(authorquery, (songid, name, index, name))
-				index += 1
-		except Exception as e:
-			print("Can't insert author: " + str(e))
-			raise
+	songid = None
+	username = authors[0]
+	songpath, real_filename = get_song_path(songbytes, song, songfile, username)
 
-		nicename = cls.trim_title(title) or songfile.filename
-		nicename = cls.finalize_trimmedname(nicename, username)
+	title = songfile.filename
 
-		try:
-			cur.execute(namequery, (songid, nicename, username))
-		except Exception as e:
-			print("Can't insert trimmed name: " + str(e))
-			raise
+	if song.name and song.name != "":
+		title = song.name	
 
-		conn.commit()
+	# the first name in the author list is treated as the owner
+	original_url =filename_to_url(real_filename, username)
+	
+	songquery = """INSERT INTO song (title, filename, original_url) 
+			VALUES (%s, %s, %s) 
+			RETURNING id;"""
+	authorquery = """INSERT INTO author (songid, username, position, shown_name) 
+			VALUES (%s, %s, %s, %s);"""
+	namequery = """INSERT INTO trimmedname (songid, nicename, owner) 
+			VALUES (%s, %s, %s);"""
+	
+	try:
+		cur.execute(songquery,
+				(title, songfile.filename, original_url))
 
-		cls.add_instruments(song, songid)
+	except Exception as e:
+		print("Can't insert song: " + str(e))
+		raise
 
-		cls.save_to_disk(songbytes, songpath)
-		return songid
+	try:
+		songid = cur.fetchone()['id']
+		index = 0
 
-	@classmethod
-	def add_instruments(cls, song, songid):
-		"""Adds all (non-empty) instruments of the given song
-		to the sample database."""
+		# we assume all authors are in the database
+		# TODO check all author names first from the DB
 
-		for index, ins in enumerate(song.instruments):
-			if not ins.sample:
-				continue
+		for name in authors:
+			cur.execute(authorquery, (songid, name, index, name))
+			index += 1
+	except Exception as e:
+		print("Can't insert author: " + str(e))
+		raise
 
-			if ins.sample.length == 0:
-				continue
+	nicename =trim_title(title) or songfile.filename
+	nicename =finalize_trimmedname(nicename, username)
 
-			Instrument.add_instrument(songid, ins, index)
+	try:
+		cur.execute(namequery, (songid, nicename, username))
+	except Exception as e:
+		print("Can't insert trimmed name: " + str(e))
+		raise
 
-	@classmethod
-	@dbconnection
-	def get_instruments(cls, songid, conn, cur, refcount=False):
-		"""Returns all instruments used in a song. 
-		Calculates also a refcount-column if enabled."""
+	conn.commit()
 
-		query = "SELECT * FROM instrument \
-				WHERE songid = %s \
-				ORDER BY index ASC;"
+	add_instruments(song, songid)
 
-		if refcount:
-			query = " WITH ins AS (SELECT * FROM instrument WHERE songid=%s) \
-					SELECT ins.sampleid, ins.songid, ins.index, ins.name, COUNT(song.id) as refcount \
-					FROM ins, song WHERE song.id in \
-						(SELECT songid FROM instrument \
-						WHERE sampleid = ins.sampleid) \
-					GROUP BY sampleid, songid, index, name \
-					ORDER BY ins.index ASC;"
+	save_to_disk(songbytes, songpath)
+	return songid
 
-		try:
-			cur.execute(query, (songid,))
-		except Exception as e:
-			print("Can't get song instruments: " + str(e))
-			raise
+def add_instruments(song, songid):
+	"""Adds all (non-empty) instruments of the given song
+	to the sample database."""
 
-		conn.commit()
-		return cur.fetchall()
+	for index, ins in enumerate(song.instruments):
+		if not ins.sample:
+			continue
 
-	@classmethod
-	@dbconnection
-	def delete_song(cls, songid, conn, cur):
-		"""Deletes a song from the database.
-		Removes all dependencies too."""
+		if ins.sample.length == 0:
+			continue
 
-		ins_query = "DELETE FROM instrument \
-				WHERE songid = %s;"
-		name_query = "DELETE FROM trimmedname \
-				WHERE songid = %s;"
-		influence_query = "DELETE FROM influence \
-				WHERE source_id = %s OR destination_id = %s;"
-		author_query = "DELETE FROM author \
-				where songid = %s;"
-		song_query = "DELETE FROM song \
-				where id = %s;"
+		Instrument.add_instrument(songid, ins, index)
 
-		song = cls.get_by_id(songid)
-		songpath = song["original_url"]
-		
-		try:
-			cur.execute(ins_query, (songid,))
-			cur.execute(name_query, (songid,))
-			cur.execute(influence_query, (songid, songid))
-			cur.execute(author_query, (songid,))
-			cur.execute(song_query, (songid,))
-		except Exception as e:
-			print("Can't delete song: " + str(e))
-			raise
+@dbconnection
+def get_instruments(songid, conn, cur, refcount=False):
+	"""Returns all instruments used in a song. 
+	Calculates also a refcount-column if enabled."""
 
-		conn.commit()
+	query = "SELECT * FROM instrument \
+			WHERE songid = %s \
+			ORDER BY index ASC;"
 
-		try:
-			filepath = get_static_song_path(songpath)
-			os.remove(filepath)
-		except Exception as e:
-			print("Can't remove song file: " + str(e))
+	if refcount:
+		query = " WITH ins AS (SELECT * FROM instrument WHERE songid=%s) \
+				SELECT ins.sampleid, ins.songid, ins.index, ins.name, COUNT(song.id) as refcount \
+				FROM ins, song WHERE song.id in \
+					(SELECT songid FROM instrument \
+					WHERE sampleid = ins.sampleid) \
+				GROUP BY sampleid, songid, index, name \
+				ORDER BY ins.index ASC;"
+
+	try:
+		cur.execute(query, (songid,))
+	except Exception as e:
+		print("Can't get song instruments: " + str(e))
+		raise
+
+	conn.commit()
+	return cur.fetchall()
+
+@dbconnection
+def delete_song(songid, conn, cur):
+	"""Deletes a song from the database.
+	Removes all dependencies too."""
+
+	ins_query = "DELETE FROM instrument \
+			WHERE songid = %s;"
+	name_query = "DELETE FROM trimmedname \
+			WHERE songid = %s;"
+	influence_query = "DELETE FROM influence \
+			WHERE source_id = %s OR destination_id = %s;"
+	author_query = "DELETE FROM author \
+			where songid = %s;"
+	song_query = "DELETE FROM song \
+			where id = %s;"
+
+	song =get_by_id(songid)
+	songpath = song["original_url"]
+	
+	try:
+		cur.execute(ins_query, (songid,))
+		cur.execute(name_query, (songid,))
+		cur.execute(influence_query, (songid, songid))
+		cur.execute(author_query, (songid,))
+		cur.execute(song_query, (songid,))
+	except Exception as e:
+		print("Can't delete song: " + str(e))
+		raise
+
+	conn.commit()
+
+	try:
+		filepath = get_static_song_path(songpath)
+		os.remove(filepath)
+	except Exception as e:
+		print("Can't remove song file: " + str(e))
 
 
 
