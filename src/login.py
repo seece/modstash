@@ -29,18 +29,24 @@ class Login(Controller):
 			raise cherrypy.HTTPRedirect(cherrypy.request.headers.get("Referer", "/") or "/")
 
 		valid = User.validate_credentials(username, password)
+		status = User.get_user(username)['member_type']
 
-		if valid:
-			User.log_visit(username)
-			cherrypy.session['username'] = username
-			cherrypy.session.save()
-			flash("Logged in successfully!", 'success')
-
-			# redirect user back to the page where login was entered
-			raise cherrypy.HTTPRedirect(cherrypy.request.headers.get("Referer", "/") or "/")
-		else:
+		if not valid:
 			flash("Invalid credentials.", 'error')
 			raise cherrypy.HTTPRedirect(cherrypy.request.headers.get("Referer", "/") or "/")
+
+		if status == 'banned':
+			flash("You can't login, you are banned!", 'error')
+			raise cherrypy.HTTPRedirect('/')
+
+		User.log_visit(username)
+		cherrypy.session['username'] = username
+		cherrypy.session.save()
+		flash("Logged in successfully!", 'success')
+
+		# redirect user back to the page where login was entered
+		raise cherrypy.HTTPRedirect(cherrypy.request.headers.get("Referer", "/") or "/")
+
 			
 	@cherrypy.expose
 	def logout(self):
