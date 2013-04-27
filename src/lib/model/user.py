@@ -133,11 +133,13 @@ def get_user_songs(username, conn, cur):
 	song data, only id's and trimmed names.
 	"""
 
-	query = 'SELECT songid, nicename FROM trimmedname \
-			WHERE songid IN \
-			(SELECT s.id FROM song s \
-				INNER JOIN author a ON a.songid=s.id \
-				AND a.username = %s);'
+	query = """
+			SELECT songid, nicename FROM trimmedname 
+			WHERE songid IN 
+			(SELECT s.id FROM song s 
+				INNER JOIN author a ON a.songid=s.id 
+				AND a.username = %s);
+			"""
 
 	cur.execute(query, (username,))
 	conn.commit()
@@ -151,13 +153,15 @@ def get_user_songs_detailed(username, conn, cur):
 	is marked being an author.
 	"""
 
-	query = 'SELECT * FROM trimmedname, song \
-			WHERE songid IN \
-			(SELECT s.id FROM song s \
-				INNER JOIN author a ON a.songid=s.id \
-				AND a.username = %s) \
-			AND song.id = trimmedname.songid \
-			ORDER BY upload_date DESC;'
+	query = """
+			SELECT * FROM trimmedname, song 
+			WHERE songid IN 
+			(SELECT s.id FROM song s 
+				INNER JOIN author a ON a.songid=s.id 
+				AND a.username = %s) 
+			AND song.id = trimmedname.songid 
+			ORDER BY upload_date DESC;
+			"""
 	cur.execute(query, (username,))
 	result = cur.fetchall()
 
@@ -167,8 +171,10 @@ def get_user_songs_detailed(username, conn, cur):
 def log_visit(username, conn, cur):
 	"""Updates user's last_logged field."""
 
-	query = 'UPDATE Member SET last_logged = CURRENT_TIMESTAMP \
-			WHERE username = %s;'
+	query = """
+			UPDATE Member SET last_logged = CURRENT_TIMESTAMP
+			WHERE username = %s;
+			"""
 	try:
 		cur.execute(query, (username,))
 	except Exception as e:
@@ -198,9 +204,11 @@ def add_user(**args):
 	pwhash = generate_hash(args["password"])
 	screen_name = args["username"]
 
-	query = "INSERT INTO Member \
-			(username, screen_name, password_hash, hash_salt, email) \
-			VALUES (%s, %s, %s, %s, %s)"
+	query = """
+			INSERT INTO Member 
+			(username, screen_name, password_hash, hash_salt, email) 
+			VALUES (%s, %s, %s, %s, %s)
+			"""
 
 	try:
 		cur.execute(query, 
